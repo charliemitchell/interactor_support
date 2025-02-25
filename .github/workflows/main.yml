@@ -15,6 +15,11 @@ jobs:
       matrix:
         ruby:
           - '3.2.2'
+    services:
+      sqlite:
+        image: nouchka/sqlite3:latest
+        ports:
+          - 8080:8080
 
     steps:
     - uses: actions/checkout@v3
@@ -23,10 +28,20 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby }}
         bundler-cache: true
-    - name: Run the default task
-      run: bundle exec rake
+    
+    - name: Install dependencies
+      run: |
+        gem install bundler
+        bundle install
+
+    - name: Set up the database
+      run: |
+        bin/rails db:create
+        bin/rails db:schema:load
+  
     - name: Run tests with coverage
       run: bundle exec rspec
+
     - name: Upload coverage to Coveralls
       uses: coverallsapp/github-action@v2
       with:
