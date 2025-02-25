@@ -1,6 +1,6 @@
 # InteractorSupport
 
-![Coverage Status](https://coveralls.io/repos/github/YOUR_USERNAME/YOUR_REPO/badge.svg?branch=main)
+[![Coverage Status](https://coveralls.io/repos/github/charliemitchell/interactor_support/badge.svg)](https://coveralls.io/github/charliemitchell/interactor_support)
 [![Ruby](https://github.com/charliemitchell/interactor_support/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/charliemitchell/interactor_support/actions/workflows/main.yml)
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/interactor_support`. To experiment with that code, run `bin/console` for an interactive prompt.
