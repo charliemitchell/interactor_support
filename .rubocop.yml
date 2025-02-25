@@ -1,0 +1,11 @@
+inherit_gem:
+  rubocop-shopify: rubocop.yml
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+Layout/ArgumentAlignment:
+  Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
