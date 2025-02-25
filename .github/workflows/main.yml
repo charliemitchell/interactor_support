@@ -36,8 +36,8 @@ jobs:
 
     - name: Set up the database
       run: |
-        bin/rails db:create
-        bin/rails db:schema:load
+        bundle exec rake db:create
+        bundle exec rake db:migrate
   
     - name: Run tests with coverage
       run: bundle exec rspec
