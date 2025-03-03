@@ -7,5 +7,3 @@ Style/Documentation:
   Enabled: false
 Layout/ArgumentAlignment:
   Enabled: false
-Style/ClassAndModuleChildren:
-  Enabled: false
