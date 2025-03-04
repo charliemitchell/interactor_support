@@ -19,7 +19,18 @@ If bundler is not being used to manage dependencies, install the gem by executin
     gem install UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
 
 # Usage
+
 coming soon
+
+Rubocop support
+
+```yml
+require:
+  - interactor_support/rubocop/cop/require_required_for_interactor_support
+
+InteractorSupport/RequireRequiredForInteractorSupport:
+  Enabled: true
+```
 
 ## Development
 
