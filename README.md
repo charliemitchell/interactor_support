@@ -22,13 +22,16 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 coming soon
 
-Rubocop support
+### Enabling Custom RuboCop Cops
 
-```yml
+If you want to use the custom RuboCop cops provided by this gem, add the following to your `.rubocop.yml`:
+
+```yaml
 require:
-  - interactor_support/rubocop/cop/require_required_for_interactor_support
-
+  - interactor_support/rubocop
 InteractorSupport/RequireRequiredForInteractorSupport:
+  Enabled: true
+InteractorSupport/UnusedIncludedModules:
   Enabled: true
 ```
 
