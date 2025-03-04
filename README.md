@@ -19,7 +19,21 @@ If bundler is not being used to manage dependencies, install the gem by executin
     gem install UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
 
 # Usage
+
 coming soon
+
+### Enabling Custom RuboCop Cops
+
+If you want to use the custom RuboCop cops provided by this gem, add the following to your `.rubocop.yml`:
+
+```yaml
+require:
+  - interactor_support/rubocop
+InteractorSupport/RequireRequiredForInteractorSupport:
+  Enabled: true
+InteractorSupport/UnusedIncludedModules:
+  Enabled: true
+```
 
 ## Development
 

@@ -12,10 +12,10 @@ module InteractorSupport
           def context_variable(key_values)
             before do
               key_values.each do |key, value|
-                if value.is_a?(Proc)
-                  context[key] = context.instance_exec(&value)
+                context[key] = if value.is_a?(Proc)
+                  context.instance_exec(&value)
                 else
-                  context[key] = value
+                  value
                 end
               end
             end
@@ -30,7 +30,7 @@ module InteractorSupport
           def transform(*keys, with: [])
             before do
               if keys.empty?
-                raise ArgumentError, "transform action requires at least one key."
+                raise ArgumentError, 'transform action requires at least one key.'
               end
 
               keys.each do |key|
@@ -41,7 +41,9 @@ module InteractorSupport
                     context.fail!(errors: ["#{key} failed to transform: #{e.message}"])
                   end
                 elsif with.is_a?(Array)
-                  context.fail!(errors: ["#{key} does not respond to all transforms"]) unless with.all? { |t| t.is_a?(Symbol) && context[key].respond_to?(t) }
+                  context.fail!(errors: ["#{key} does not respond to all transforms"]) unless with.all? do |t|
+                    t.is_a?(Symbol) && context[key].respond_to?(t)
+                  end
                   context[key] = with.inject(context[key]) do |value, method|
                     value.send(method)
                   end
@@ -50,7 +52,7 @@ module InteractorSupport
                 elsif with.is_a?(Symbol)
                   context.fail!(errors: ["#{key} does not respond to #{with}"])
                 else
-                  raise ArgumentError, "transform requires `with` to be a symbol or array of symbols."
+                  raise ArgumentError, 'transform requires `with` to be a symbol or array of symbols.'
                 end
               end
             end

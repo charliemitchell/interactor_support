@@ -7,5 +7,6 @@ Style/Documentation:
   Enabled: false
 Layout/ArgumentAlignment:
   Enabled: false
-Style/ClassAndModuleChildren:
-  Enabled: false
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+  Enabled: true

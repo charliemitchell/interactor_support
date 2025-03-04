@@ -1,6 +1,5 @@
 RSpec.describe(InteractorSupport::Concerns::Skippable) do
   describe '.skip' do
-
     let(:default_interactor) do
       Class.new do
         include Interactor
@@ -18,7 +17,7 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           skip if: true
         end
         result = interactor.call
-        expect(result.executed).to be_nil
+        expect(result.executed).to(be_nil)
       end
 
       it 'skips execution when a block is passed' do
@@ -26,7 +25,7 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           skip if: -> { true }
         end
         result = interactor.call
-        expect(result.executed).to be_nil
+        expect(result.executed).to(be_nil)
       end
 
       it 'skips execution when a method is passed' do
@@ -38,8 +37,8 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           end
         end
         result = interactor.call
-        expect(result.executed).to be_nil
-        expect(result[:condition_met]).to be true
+        expect(result.executed).to(be_nil)
+        expect(result[:condition_met]).to(be(true))
       end
 
       it 'skips execution when a context variable is passed' do
@@ -47,7 +46,7 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           skip if: :condition
         end
         result = interactor.call(condition: true)
-        expect(result.executed).to be_nil
+        expect(result.executed).to(be_nil)
       end
     end
 
@@ -57,7 +56,7 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           skip if: false
         end
         result = interactor.call
-        expect(result.executed).to be true
+        expect(result.executed).to(be(true))
       end
 
       it 'executes normally when a block is passed' do
@@ -65,7 +64,7 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           skip if: -> { false }
         end
         result = interactor.call
-        expect(result.executed).to be true
+        expect(result.executed).to(be(true))
       end
 
       it 'executes normally when a method is passed' do
@@ -78,8 +77,8 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           end
         end
         result = interactor.call
-        expect(result.executed).to be true
-        expect(result.condition_met).to be true
+        expect(result.executed).to(be(true))
+        expect(result.condition_met).to(be(true))
       end
 
       it 'executes normally when a context variable is passed' do
@@ -87,7 +86,7 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           skip if: :condition
         end
         result = interactor.call(condition: false)
-        expect(result.executed).to be true
+        expect(result.executed).to(be(true))
       end
     end
 
@@ -97,7 +96,7 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           skip unless: true
         end
         result = interactor.call
-        expect(result.executed).to be true
+        expect(result.executed).to(be(true))
       end
 
       it 'skips execution when a block is passed' do
@@ -105,7 +104,7 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           skip unless: -> { true }
         end
         result = interactor.call
-        expect(result.executed).to be true
+        expect(result.executed).to(be(true))
       end
 
       it 'skips execution when a method is passed' do
@@ -117,8 +116,8 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           end
         end
         result = interactor.call
-        expect(result.executed).to be true
-        expect(result[:condition_met]).to be true
+        expect(result.executed).to(be(true))
+        expect(result[:condition_met]).to(be(true))
       end
 
       it 'skips execution when a context variable is passed' do
@@ -126,7 +125,7 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           skip unless: :condition
         end
         result = interactor.call(condition: true)
-        expect(result.executed).to be true
+        expect(result.executed).to(be(true))
       end
     end
 
@@ -136,7 +135,7 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           skip unless: false
         end
         result = interactor.call
-        expect(result.executed).to be_nil
+        expect(result.executed).to(be_nil)
       end
 
       it 'executes normally when a block is passed' do
@@ -144,7 +143,7 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           skip unless: -> { false }
         end
         result = interactor.call
-        expect(result.executed).to be_nil
+        expect(result.executed).to(be_nil)
       end
 
       it 'executes normally when a method is passed' do
@@ -157,8 +156,8 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           end
         end
         result = interactor.call
-        expect(result.executed).to be_nil
-        expect(result.condition_met).to be true
+        expect(result.executed).to(be_nil)
+        expect(result.condition_met).to(be(true))
       end
 
       it 'executes normally when a context variable is passed' do
@@ -166,7 +165,7 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
           skip unless: :condition
         end
         result = interactor.call(condition: false)
-        expect(result.executed).to be_nil
+        expect(result.executed).to(be_nil)
       end
     end
 
@@ -180,10 +179,10 @@ RSpec.describe(InteractorSupport::Concerns::Skippable) do
 
           skip if: true
         end
-        
+
         result = interactor.call
-        expect(result.around_executed).to be true
-        expect(result.executed).to be_nil
+        expect(result.around_executed).to(be(true))
+        expect(result.executed).to(be_nil)
       end
     end
   end

@@ -4,21 +4,20 @@ module InteractorSupport
       extend ActiveSupport::Concern
       included do
         class << self
-          
           # How It Works for Each Case:
 
-          # update :post, attributes: { title: :title, body: :body } 
+          # update :post, attributes: { title: :title, body: :body }
           # context.post.update!(title: context.title, body: context.body)
-          # 
+          #
           # update :post, attributes: { title: :title, body: :body } context_key: :current_post
           # context.current_post = context.post.update!(title: context.title, body: context.body)
-          # 
+          #
           # update :post, attributes: { request: { title: :title, body: :body } }
           # context.post.update!(title: context.request.title, body: context.request.body), fails if context.request.nil?
-          # 
+          #
           # update :post, attributes: { request: [:title, :body] }
           # context.post.update!(title: context.request.title, body: context.request.body), fails if context.request.nil?
-          # 
+          #
           # update :post, attributes: :request
           # context.post.update!(context.request), fails if context.request.nil?
 
@@ -59,7 +58,7 @@ module InteractorSupport
                 end
 
               record.update!(update_data)
-              
+
               # Assign the updated record to context
               context[context_key] = record
             end

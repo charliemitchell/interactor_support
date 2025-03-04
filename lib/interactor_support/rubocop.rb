@@ -1,0 +1,2 @@
+require_relative 'rubocop/cop/require_required_for_interactor_support'
+require_relative 'rubocop/cop/unused_included_modules'

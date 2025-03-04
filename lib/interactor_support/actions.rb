@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module InteractorSupport
   module Actions
     extend ActiveSupport::Concern
