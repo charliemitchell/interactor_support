@@ -257,6 +257,14 @@ Cop/UsedUnincludedModules:
   Enabled: true
 ```
 
+`Cop/RequireRequiredForInteractorSupport` registers an offense when not invoking `required` when including InteractorSupport.
+Since required both acts as documentation as to what context attributes are required for your Interactor or Organizer, and an `attr_reader` for context values.
+
+`Cop/UnusedIncludedModules` a highly aggressive cop intended to promote lean interactors. It registers an offense when including modules that are unused in the interactor. eg: `include InteractorSupport` includes all of the concerns, and validations. However, Request Objects are ignored.
+
+`Cop/UsedUnincludedModules` registers an offense when including Interactor, and invoking methods in InteractorSupport, but not including the correct module for it. This can give false positives if using another module that implements the same method name
+as an InteractorSupport method, and intentionally not including InteractorSupport.
+
 ---
 
 ## 🤝 **Contributing**
