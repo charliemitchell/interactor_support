@@ -8,14 +8,35 @@ module InteractorSupport
       include ActiveModel::Attributes
       include ActiveModel::Validations::Callbacks
 
-      # before_validation :apply_transforms
-
       def initialize(attributes = {})
         super(attributes)
         raise ActiveModel::ValidationError, self unless valid?
       end
 
+      def to_context
+        key_type = InteractorSupport.configuration.request_object_key_type
+        attrs = attributes.each_with_object({}) do |(name, value), hash|
+          name = key_type == :string ? name.to_s : name.to_sym
+          hash[name] = if value.respond_to?(:to_context)
+            value.to_context
+          elsif value.is_a?(Array) && value.first.respond_to?(:to_context)
+            value.map(&:to_context)
+          else
+            value
+          end
+        end
+        return Struct.new(*attrs.keys).new(*attrs.values) if key_type == :struct
+
+        attrs
+      end
+
       class << self
+        def new(*args, **kwargs)
+          return super(*args, **kwargs) if InteractorSupport.configuration.request_object_behavior == :returns_self
+
+          super(*args, **kwargs).to_context
+        end
+
         # Accepts one or more attribute names along with options.
         #
         # Options:

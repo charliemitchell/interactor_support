@@ -1,54 +1,270 @@
-# InteractorSupport
+# **InteractorSupport** 🚀
 
-[![Coverage Status](https://coveralls.io/repos/github/charliemitchell/interactor_support/badge.svg)](https://coveralls.io/github/charliemitchell/interactor_support)
-[![Ruby](https://github.com/charliemitchell/interactor_support/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/charliemitchell/interactor_support/actions/workflows/main.yml)
+Make your **Rails interactors** clean, powerful, and less error-prone!
+
+[![Coverage Status](https://coveralls.io/repos/github/charliemitchell/interactor_support/badge.svg)](https://coveralls.io/github/charliemitchell/interactor_support)  
+[![Ruby](https://github.com/charliemitchell/interactor_support/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/charliemitchell/interactor_support/actions/workflows/main.yml)  
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/2a0750b6e87b4a288f568d49d45f6a6c)](https://app.codacy.com/gh/charliemitchell/interactor_support/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/interactor_support`. To experiment with that code, run `bin/console` for an interactive prompt.
+---
 
-## Installation
+## 🚀 **What Is InteractorSupport?**
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+`InteractorSupport` **extends the Interactor pattern** to make your **business logic more concise, expressive, and robust.**
 
-Install the gem and add to the application's Gemfile by executing:
+### ✅ **Why Use It?**
 
-    bundle add UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+- **Automatic Validations** – Validate inputs before execution
+- **Data Transformations** – Trim, downcase, and sanitize with ease
+- **Transactional Execution** – Keep data safe with rollback support
+- **Conditional Skipping** – Skip execution based on logic
+- **Auto Record Lookup & Updates** – Reduce boilerplate code
+- **Request Objects** – Lean on **ActiveModel** for structured, validated inputs
+- **Custom RuboCop Cops** – Enforce best practices
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+---
 
-    gem install UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+## 📦 **Installation**
 
-# Usage
+Add to your Gemfile:
 
-coming soon
+```sh
+bundle add interactor_support
+```
 
-### Enabling Custom RuboCop Cops
+Or install manually:
 
-If you want to use the custom RuboCop cops provided by this gem, add the following to your `.rubocop.yml`:
+```sh
+gem install interactor_support
+```
+
+---
+
+## 🚦 **Getting Started**
+
+### **The Problem: Messy Interactors**
+
+Without `InteractorSupport`
+
+```ruby
+class UpdateTodoTitle
+  include Interactor
+
+  def call
+    todo = Todo.find_by(id: context.todo_id)
+    return context.fail!(error: "Todo not found") if todo.nil?
+
+    todo.update!(title: context.title.strip, completed: context.completed)
+    context.todo = todo
+  end
+end
+```
+
+**Problems:**
+
+❌ Repetitive boilerplate  
+❌ Manual failure handling  
+❌ No automatic transformations
+
+---
+
+### **The Solution: InteractorSupport**
+
+With InteractorSupport, your interactor is now elegant and expressive:
+
+```rb
+class UpdateTodoTitle
+  include Interactor
+  include InteractorSupport
+
+  requires :todo_id, :title
+  transform :title, with: :strip
+  find_by :todo, query: { id: :todo_id }, required: true
+  update :todo, attributes: { title: :title }
+
+  def call
+    context.message = "Todo updated!"
+  end
+end
+```
+
+**🚀 What changed?**
+
+✅ Self documenting validation using `requires`
+✅ Trimmed the title with `transform`
+✅ Automatic record lookup with `find_by`
+✅ Automatic update with `update`
+
+### Making it even more powerful
+
+```rb
+class CompleteTodo
+  include Interactor
+  include InteractorSupport
+
+  transaction
+  requires :todo_id
+  find_by :todo, query: { id: :todo_id }, required: true
+
+  update :todo, attributes: {
+    completed: true,
+    completed_at: -> { Time.current }
+  }
+end
+```
+
+✅ Wraps the interactor in an active record transaction
+✅ Self documenting validation using `requires`
+✅ Automatic record lookup with `find_by`
+✅ Automatic update with `update` using static values, and a context aware lambda.
+
+### Skipping execution when it's not needed
+
+```rb
+class CompleteTodo
+  include Interactor
+  include InteractorSupport
+
+  transaction
+  requires :todo
+  skip if: -> { todo.completed? }
+  update :todo, attributes: { completed: true, completed_at: -> { Time.current } }
+end
+```
+
+## 📜 **Request Objects – Lean on Rails Conventions**
+
+Instead of raw hashes, **Request Objects** provide **validation, transformation, and structure**.
+
+### ✅ **Built on ActiveModel**
+
+- Works just like an **ActiveRecord model**
+- Supports **validations** out of the box
+- Automatically **transforms & sanitizes** data
+
+```ruby
+class TodoRequest
+  include InteractorSupport::RequestObject
+
+  attribute :title, transform: :strip
+  attribute :email, transform: [:strip, :downcase]
+  attribute :completed, type: Boolean, default: false
+
+  validates :title, presence: true
+  validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+end
+```
+
+---
+
+## 📖 **Documentation**
+
+### **Modules & Features**
+
+#### 🔹 **`InteractorSupport::Concerns::Updatable`**
+
+Provides the `update` method to **automatically update records** based on context.
+
+```rb
+# example incantations
+update :todo, attributes: { title: :title } # -> context.todo.update!(title: context.title)
+update :todo, attributes: { title: :title }, context_key: :updated_todo # -> context.updated_todo = context.todo.update!(title: context.title)
+update :todo, attributes: { request: { title: :title } } # -> context.todo.update!(title: context.request.title)
+update :todo, attributes: { request: [:title, :completed] } # -> context.todo.update!(title: context.request.title, completed: context.request.completed)
+update :todo, attributes: :request # -> context.todo.update!(context.request)
+update :todo, attributes: [:title, :completed] # -> context.todo.update!(title: context.title, completed: context.completed)
+update :todo, attributes: { title: :title, completed: true, completed_at: -> { Time.zone.now } } # -> context.todo.update!(title: context.title, completed: true, completed_at: Time.zone.now)
+```
+
+#### 🔹 **`InteractorSupport::Concerns::Findable`**
+
+Provides `find_by` and `find_where` to **automatically locate records**.
+
+```rb
+# example incantations
+
+# Genre.find_by(id: context.genre_id)
+find_by :genre, context_key: :current_genre
+
+# lambdas are executed within the interactor's context, can be anything needed to compute at runtime
+# Genre.find_by(name: context.name, created_at: context.some_context_value )
+find_by :genre, query: { name: :name, created_at: -> { some_context_value } }
+find_by :genre, query: { name: :name, created_at: -> { 7.days.ago...1.day.ago } }
+
+# be careful here, this is not advisable.
+find_by :genre, query: { name: :name, created_at: 7.days.ago...1.day.ago }
+
+# Genre.find_by(name: context.name)
+find_by :genre, query: { name: :name }
+
+# context.current_genre = Genre.find_by(id: context.genre_id)
+find_by :genre, context_key: :current_genre
+
+# Genre.find_by(id: context.genre_id), fails the context if the result is nil
+find_by :genre, required: true
+
+# find_where
+# Post.where(user_id: context.user_id)
+find_where :post, where: { user_id: :user_id }
+
+# Same as above, but will fail the context if the results are empty
+find_where :post, where: { user_id: :user_id }, required: true
+
+# lambdas are executed within the interactor's context
+# Post.where(user_id: context.user_id, created_at: context.some_context_value )
+find_where :post, where: { user_id: :user_id, created_at: -> { some_context_value } }
+
+# Post.where(user_id: context.user_id).where.not(active: false)
+find_where :post, where: { user_id: :user_id }, where_not: { active: false }
+
+# Post.active.where(user_id: context.user_id)
+find_where :post, where: { user_id: :user_id }, scope: :active
+
+# context.user_posts = Post.where(user_id: context.user_id)
+find_where :post, where: { user_id: :user_id }, context_key: :user_posts
+```
+
+#### 🔹 **`InteractorSupport::Concerns::Transformable`**
+
+Provides `transform` to **sanitize and normalize inputs**.
+
+#### 🔹 **`InteractorSupport::Concerns::Skippable`**
+
+Allows an interactor to **skip execution** if a condition is met.
+
+#### 🔹 **`InteractorSupport::Validations`**
+
+Provides **automatic input validation** before execution.
+
+#### 🔹 **`InteractorSupport::RequestObject`**
+
+Provides structured, validated request objects based on **ActiveModel**.
+
+---
+
+## 📏 **Custom RuboCop Cops**
+
+Enable them in `.rubocop.yml`:
 
 ```yaml
 require:
   - interactor_support/rubocop
-InteractorSupport/RequireRequiredForInteractorSupport:
+Cop/RequireRequiredForInteractorSupport:
   Enabled: true
-InteractorSupport/UnusedIncludedModules:
+Cop/UnusedIncludedModules:
+  Enabled: true
+Cop/UsedUnincludedModules:
   Enabled: true
 ```
 
-## Development
+---
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+## 🤝 **Contributing**
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+Pull requests are welcome on [GitHub](https://github.com/charliemitchell/interactor_support).
 
-## Contributing
+---
 
-Bug reports and pull requests are welcome on GitHub at <https://github.com/[USERNAME]/interactor_support>. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/interactor_support/blob/master/CODE_OF_CONDUCT.md).
+## 📜 **License**
 
-## License
-
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
-## Code of Conduct
-
-Everyone interacting in the InteractorSupport project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/interactor_support/blob/master/CODE_OF_CONDUCT.md).
+Released under the [MIT License](https://opensource.org/licenses/MIT).
