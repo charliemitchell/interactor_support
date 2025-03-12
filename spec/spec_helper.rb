@@ -9,6 +9,8 @@ SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new([
 SimpleCov.start do
   add_filter '/spec/' # Exclude spec files from coverage
   add_filter '/lib/interactor_support/version.rb' # Exclude config files from coverage
+  add_filter '/lib/interactor_support/rubocop/'
+  add_filter '/lib/interactor_support/rubocop.rb'
   track_files 'lib/**/*.rb' # Explicitly track lib files
 end
 

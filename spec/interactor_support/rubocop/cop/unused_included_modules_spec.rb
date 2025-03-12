@@ -46,7 +46,7 @@ RSpec.describe(RuboCop::Cop::UnusedIncludedModules, :config) do
       inspection = inspect_source(source)
       puts inspection.first.message
       expect(inspection.first.message).to(
-        eq('Cop/UnusedIncludedModules: Use `include InteractorSupport::Concerns::Findable` instead'),
+        eq('Cop/UnusedIncludedModules: Use `include InteractorSupport::Concerns::Findable` instead.'),
       )
     end
 
@@ -62,7 +62,7 @@ RSpec.describe(RuboCop::Cop::UnusedIncludedModules, :config) do
       )
 
       expect(source.first.message).to(
-        eq('Cop/UnusedIncludedModules: Use `include InteractorSupport::Validations` instead'),
+        eq('Cop/UnusedIncludedModules: Use `include InteractorSupport::Validations` instead.'),
       )
     end
 
@@ -79,7 +79,7 @@ RSpec.describe(RuboCop::Cop::UnusedIncludedModules, :config) do
       )
       puts source.first.message
       expect(source.first.message).to(
-        eq('Cop/UnusedIncludedModules: Use `include InteractorSupport::Validations, include InteractorSupport::Concerns::Findable` instead'),
+        eq('Cop/UnusedIncludedModules: Use `include InteractorSupport::Validations, include InteractorSupport::Concerns::Findable` instead.'),
       )
     end
   end
