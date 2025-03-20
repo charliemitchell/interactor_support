@@ -234,7 +234,34 @@ Allows an interactor to **skip execution** if a condition is met.
 
 #### 🔹 **`InteractorSupport::Validations`**
 
-Provides **automatic input validation** before execution.
+Provides **automatic input validation** before execution. This includes `ActiveModel::Validations` and
+`ActiveModel::Validations::Callbacks`, and adds a few extra methods.
+
+| method           | description                                                                                                                                                                            |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| required         | a self documenting helper method that registers the attribute as an accessor, applies any active model validations passed to it. If the attribute is missing, it will fail the context |
+| optional         | a self documenting helper method that registers the attribute as an accessor, applies any active model validations passed to it using `:if_assigned`                                   |
+| validates_after  | An after validator to ensure context consistancy.                                                                                                                                      |
+| validates_before | will likely be deprecated in the future.                                                                                                                                               |
+
+```rb
+class CreateUser
+  include Interactor
+  include InteractorSupport
+
+  required email: { presence: true, format: { with: URI::MailTo::EMAIL_REGEXP } },
+           password: { presence: true, length: { minimum: 6 } }
+
+  optional age: { numericality: { greater_than: 18 } }
+  validates_after :user, persisted: true
+end
+```
+
+✅ email must be present and match a valid format
+✅ password must be present and at least 6 characters long
+✅ age is optional but must be greater than 18 if provided
+
+If any validation fails, context.fail!(errors: errors.full_messages) will automatically halt execution.
 
 #### 🔹 **`InteractorSupport::RequestObject`**
 

@@ -88,6 +88,35 @@ RSpec.describe(InteractorSupport::Concerns::Findable) do
         expect(context.genre).to(be_nil)
       end
     end
+
+    context 'when query contains a lambda' do
+      let!(:genre) { genre_class.create!(name: 'Rock') }
+      it 'evaluates the lambda dynamically' do
+        interactor = Class.new do
+          include Interactor
+          include InteractorSupport::Concerns::Findable
+
+          find_by :genre, query: { name: -> { 'Rock' } }
+        end
+        context = interactor.call
+        expect(context.genre).to(eq(genre))
+      end
+    end
+
+    context 'when query contains a raw value' do
+      let!(:genre) { genre_class.create!(name: 'Rock') }
+      it 'uses the raw value' do
+        interactor = Class.new do
+          include Interactor
+          include InteractorSupport::Concerns::Findable
+
+          find_by :genre, query: { name: 'Rock' }
+        end
+
+        context = interactor.call
+        expect(context.genre).to(eq(genre))
+      end
+    end
   end
 
   describe '.find_where' do
@@ -179,6 +208,87 @@ RSpec.describe(InteractorSupport::Concerns::Findable) do
 
         context = interactor.call
         expect(context.genres).to(eq([genre]))
+      end
+    end
+
+    context 'when where clause contains a lambda' do
+      let!(:pop) { genre_class.create!(name: 'Pop') }
+      it 'evaluates the lambda dynamically' do
+        interactor = Class.new do
+          include Interactor
+          include InteractorSupport::Concerns::Findable
+
+          find_where :genre, where: { name: -> { 'Pop' } }
+        end
+
+        context = interactor.call
+        expect(context.genres).to(eq([pop]))
+      end
+      it 'is executed in the context of the interactor' do
+        interactor = Class.new do
+          include Interactor
+          include InteractorSupport::Concerns::Findable
+
+          find_where :genre, where: { name: -> { context.name } }
+        end
+
+        context = interactor.call(name: 'Pop')
+        expect(context.genres).to(eq([pop]))
+      end
+    end
+
+    context 'when where clause contains a raw value' do
+      let!(:pop) { genre_class.create!(name: 'Pop') }
+      it 'uses the raw value' do
+        interactor = Class.new do
+          include Interactor
+          include InteractorSupport::Concerns::Findable
+
+          find_where :genre, where: { name: 'Pop' }
+        end
+
+        context = interactor.call
+        expect(context.genres).to(eq([pop]))
+      end
+    end
+
+    context 'when where_not clause contains a lambda' do
+      let!(:pop) { genre_class.create!(name: 'Pop') }
+      it 'evaluates the lambda dynamically' do
+        interactor = Class.new do
+          include Interactor
+          include InteractorSupport::Concerns::Findable
+
+          find_where :genre, where_not: { name: -> { 'Rock' } }
+        end
+
+        context = interactor.call
+        expect(context.genres).to(eq([pop]))
+      end
+      it 'is executed in the context of the interactor' do
+        interactor = Class.new do
+          include Interactor
+          include InteractorSupport::Concerns::Findable
+
+          find_where :genre, where_not: { name: -> { context.name } }
+        end
+
+        context = interactor.call(name: 'Rock')
+        expect(context.genres).to(eq([pop]))
+      end
+    end
+    context 'when where_not clause contains a raw value' do
+      let!(:pop) { genre_class.create!(name: 'Pop') }
+      it 'uses the raw value' do
+        interactor = Class.new do
+          include Interactor
+          include InteractorSupport::Concerns::Findable
+
+          find_where :genre, where_not: { name: 'Rock' }
+        end
+
+        context = interactor.call
+        expect(context.genres).to(eq([pop]))
       end
     end
   end
