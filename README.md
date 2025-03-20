@@ -248,8 +248,8 @@ class CreateUser
   include Interactor
   include InteractorSupport
 
-  required email: { presence: true, format: { with: URI::MailTo::EMAIL_REGEXP } },
-           password: { presence: true, length: { minimum: 6 } }
+  required email: { format: { with: URI::MailTo::EMAIL_REGEXP } },
+           password: { length: { minimum: 6 } }
 
   optional age: { numericality: { greater_than: 18 } }
   validates_after :user, persisted: true
