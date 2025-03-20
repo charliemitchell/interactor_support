@@ -20,7 +20,6 @@ Make your **Rails interactors** clean, powerful, and less error-prone!
 - **Conditional Skipping** – Skip execution based on logic
 - **Auto Record Lookup & Updates** – Reduce boilerplate code
 - **Request Objects** – Lean on **ActiveModel** for structured, validated inputs
-- **Custom RuboCop Cops** – Enforce best practices
 
 ---
 
@@ -266,33 +265,6 @@ If any validation fails, context.fail!(errors: errors.full_messages) will automa
 #### 🔹 **`InteractorSupport::RequestObject`**
 
 Provides structured, validated request objects based on **ActiveModel**.
-
----
-
-## 📏 **Custom RuboCop Cops**
-
-Enable them in `.rubocop.yml`:
-
-```yaml
-require:
-  - interactor_support/rubocop
-Cop/RequireRequiredForInteractorSupport:
-  Enabled: true
-Cop/UnusedIncludedModules:
-  Enabled: true
-Cop/UsedUnincludedModules:
-  Enabled: true
-```
-
-`Cop/RequireRequiredForInteractorSupport` registers an offense when not invoking `required` when including InteractorSupport.
-Since required both acts as documentation as to what context attributes are required for your Interactor or Organizer, and an `attr_reader` for context values.
-
-`Cop/UnusedIncludedModules` a highly aggressive cop intended to promote lean interactors. It registers an offense when including modules that are unused in the interactor. eg: `include InteractorSupport` includes all of the concerns, and validations. However, Request Objects are ignored.
-
-`Cop/UsedUnincludedModules` registers an offense when including Interactor, and invoking methods in InteractorSupport, but not including the correct module for it. This can give false positives if using another module that implements the same method name
-as an InteractorSupport method, and intentionally not including InteractorSupport.
-
----
 
 ## 🤝 **Contributing**
 
