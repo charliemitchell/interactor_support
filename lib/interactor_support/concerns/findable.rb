@@ -2,7 +2,8 @@ module InteractorSupport
   module Concerns
     module Findable
       extend ActiveSupport::Concern
-
+      include InteractorSupport::Core
+      
       included do
         class << self
           # This method finds a single record using query parameters.

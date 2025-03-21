@@ -2,6 +2,7 @@ module InteractorSupport
   module Concerns
     module Transformable
       extend ActiveSupport::Concern
+      include InteractorSupport::Core
 
       included do
         class << self

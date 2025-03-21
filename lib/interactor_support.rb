@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+require 'interactor'
 require 'active_support/concern'
+require_relative 'interactor_support/core'
 require_relative 'interactor_support/version'
 require_relative 'interactor_support/actions'
 require_relative 'interactor_support/validations'

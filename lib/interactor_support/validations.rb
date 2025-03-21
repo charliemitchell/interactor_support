@@ -3,6 +3,7 @@ require 'active_model'
 module InteractorSupport
   module Validations
     extend ActiveSupport::Concern
+    include InteractorSupport::Core
 
     included do
       include ActiveModel::Validations
