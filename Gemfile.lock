@@ -249,9 +249,7 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
-  interactor (~> 3.0)
   interactor_support!
-  rails
   rake (~> 13.0)
   rspec (~> 3.0)
   rubocop (~> 1.21)
