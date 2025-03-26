@@ -28,7 +28,7 @@ Make your **Rails interactors** clean, powerful, and less error-prone!
 Add to your Gemfile:
 
 ```sh
-bundle add interactor_support
+gem 'interactor_support', '~> 1.0', '>= 1.0.1'
 ```
 
 Or install manually:
