@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
+require 'rails'
 require 'interactor'
-require 'logger'
 require 'active_support/concern'
 require_relative 'interactor_support/core'
 require_relative 'interactor_support/version'
