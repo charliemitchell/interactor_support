@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 require 'logger'
-require 'interactor'
+Object.const_set(:Logger, Logger) unless defined?(Logger)
 require 'active_support/concern'
+require 'interactor'
 require_relative 'interactor_support/version'
 
 module InteractorSupport
