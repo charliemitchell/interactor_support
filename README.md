@@ -37,6 +37,14 @@ Or install manually:
 gem install interactor_support
 ```
 
+It is reccommended that you use Rails 7.1.x and above with this gem. However, it will work with older versions of rails. You may encounter the issue below when using Rails versions prior to 7.1.
+
+```
+<module:LoggerThreadSafeLevel>: uninitialized constant ActiveSupport::LoggerThreadSafeLevel::Logger (NameError)
+```
+
+In that case, you need to add `require "logger"` as the first line to your `boot.rb file` or pin the concurrent-ruby version to `gem 'concurrent-ruby', '1.3.4'`. If feasible, consider upgrading your Rails application to version 7.1 or newer, where this compatibility issue has been addressed.
+
 ---
 
 ## 🚦 **Getting Started**
