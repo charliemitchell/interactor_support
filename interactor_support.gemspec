@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 2.6.0'
 
-  spec.metadata['allowed_push_host'] = 'https://rubygems.com'
+  spec.metadata['allowed_push_host'] = 'https://rubygems.org'
   spec.metadata['homepage_uri'] = 'https://github.com/charliemitchell/interactor_support'
   spec.metadata['source_code_uri'] = 'https://github.com/charliemitchell/interactor_support.git'
   spec.metadata['changelog_uri'] = 'https://github.com/charliemitchell/interactor_support/blob/master/CHANGELOG.md'
