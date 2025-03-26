@@ -1,10 +1,11 @@
 # frozen_string_literal: true
+
 require 'simplecov'
 require 'simplecov-lcov'
 SimpleCov::Formatter::LcovFormatter.config.report_with_single_file = true
 SimpleCov.formatters = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::HTMLFormatter, # Generates HTML report
-  SimpleCov::Formatter::LcovFormatter   # Generates LCOV report
+  SimpleCov::Formatter::LcovFormatter, # Generates LCOV report
 ])
 SimpleCov.start do
   add_filter '/spec/' # Exclude spec files from coverage
@@ -16,12 +17,12 @@ end
 
 require 'rails'
 require 'active_record'
-require "active_support"
-require "interactor"
-require "interactor_support"
-require "byebug"
+require 'active_support'
+require 'interactor'
+require 'interactor_support'
+require 'byebug'
 
-Dir[File.expand_path("../lib/*.rb", __FILE__)].sort.each { |f| require f }
+Dir[File.expand_path('../lib/*.rb', __FILE__)].sort.each { |f| require f }
 
 # Load the Rails environment
 ENV['RAILS_ENV'] ||= 'test'
@@ -36,12 +37,12 @@ end
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
-  config.example_status_persistence_file_path = ".rspec_status"
+  config.example_status_persistence_file_path = '.rspec_status'
 
   # Disable RSpec exposing methods globally on `Module` and `main`
   config.disable_monkey_patching!
 
-  config.expect_with :rspec do |c|
+  config.expect_with(:rspec) do |c|
     c.syntax = :expect
   end
 
@@ -52,7 +53,9 @@ RSpec.configure do |config|
 
   config.after(:each) do
     ActiveRecord::Base.connection.tables.each do |table|
-      ActiveRecord::Base.connection.execute("DELETE FROM #{table}") unless table == "schema_migrations"
+      ActiveRecord::Base.connection.execute("DELETE FROM #{table}") unless table == 'schema_migrations'
     end
   end
+
+  Dir[File.expand_path('../../lib/interactor_support/concerns/*.rb', __FILE__)].sort.each { |f| require f }
 end
