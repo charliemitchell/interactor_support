@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'logger'
 require_relative 'lib/interactor_support/version'
 
 Gem::Specification.new do |spec|
