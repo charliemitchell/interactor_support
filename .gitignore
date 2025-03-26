@@ -12,3 +12,4 @@
 .vscode/settings.json
 /db
 .byebug_history
+*.gem
