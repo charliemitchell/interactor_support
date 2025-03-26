@@ -11,9 +11,7 @@ group :development, :test do
   gem 'rspec', '~> 3.0'
   gem 'rubocop', '~> 1.21'
   gem 'rubocop-shopify', '~> 2.1', require: false
-  gem 'rails'
   gem 'sqlite3', '>= 2.1'
-  gem 'interactor', '~> 3.0'
   gem 'byebug'
 end
 
