@@ -42,11 +42,20 @@ module InteractorSupport
                     context.fail!(errors: ["#{key} failed to transform: #{e.message}"])
                   end
                 elsif with.is_a?(Array)
-                  context.fail!(errors: ["#{key} does not respond to all transforms"]) unless with.all? do |t|
-                    t.is_a?(Symbol) && context[key].respond_to?(t)
-                  end
-                  context[key] = with.inject(context[key]) do |value, method|
-                    value.send(method)
+                  with.each do |method|
+                    if method.is_a?(Proc)
+                      begin
+                        context[key] = context.instance_exec(&method)
+                      rescue => e
+                        context.fail!(errors: ["#{key} failed to transform: #{e.message}"])
+                      end
+                    else
+                      context.fail!(
+                        errors: ["#{key} does not respond to all transforms"],
+                      ) unless context[key].respond_to?(method)
+
+                      context[key] = context[key].send(method)
+                    end
                   end
                 elsif with.is_a?(Symbol) && context[key].respond_to?(with)
                   context[key] = context[key].send(with)
