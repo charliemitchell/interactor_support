@@ -17,6 +17,10 @@ group :development, :test do
   gem 'byebug'
 end
 
+group :development do
+  gem 'yard'
+end
+
 group :test do
   gem 'simplecov', require: false
   gem 'simplecov-lcov', require: false

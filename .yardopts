@@ -1,0 +1,20 @@
+lib/**/*.rb
+README.md
+LICENSE.txt
+
+--title
+InteractorSupport Documentation
+
+--markup
+markdown
+
+--no-private
+--no-yardopts
+
+--exclude
+spec/
+test/
+config/
+db/
+vendor/
+node_modules/

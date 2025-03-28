@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-
   pull_request:
 
 jobs:
@@ -14,7 +13,7 @@ jobs:
     strategy:
       matrix:
         ruby:
-          - '3.2.2'
+          - "3.2.2"
     services:
       sqlite:
         image: nouchka/sqlite3:latest
@@ -22,27 +21,56 @@ jobs:
           - 8080:8080
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true
-    
-    - name: Install dependencies
-      run: |
-        gem install bundler
-        bundle install
+      - uses: actions/checkout@v3
 
-    - name: Set up the database
-      run: |
-        bundle exec rake db:create
-        bundle exec rake db:migrate
-  
-    - name: Run tests with coverage
-      run: bundle exec rspec
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
 
-    - name: Upload coverage to Coveralls
-      uses: coverallsapp/github-action@v2
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install
+
+      - name: Set up the database
+        run: |
+          bundle exec rake db:create
+          bundle exec rake db:migrate
+
+      - name: Run tests with coverage
+        run: bundle exec rspec
+
+      - name: Upload coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  yard_docs:
+    runs-on: ubuntu-latest
+    name: Generate and Deploy YARD Docs
+    needs: build
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2.2"
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: bundle install
+
+      - name: Generate YARD documentation
+        run: bundle exec yard doc
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./doc
+          publish_branch: gh-pages
