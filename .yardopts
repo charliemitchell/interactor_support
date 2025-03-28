@@ -1,4 +1,5 @@
-lib/**/*.rb
+lib/interactor_support.rb
+lib/interactor_support/**/*.rb
 
 --title
 InteractorSupport Documentation
@@ -8,9 +9,9 @@ markdown
 
 --no-private
 --no-yardopts
---no-load
 
 --exclude
+bin/
 spec/
 test/
 config/
