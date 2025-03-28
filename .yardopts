@@ -1,6 +1,4 @@
 lib/**/*.rb
-README.md
-LICENSE.txt
 
 --title
 InteractorSupport Documentation
@@ -10,6 +8,7 @@ markdown
 
 --no-private
 --no-yardopts
+--no-load
 
 --exclude
 spec/
@@ -17,4 +16,3 @@ test/
 config/
 db/
 vendor/
-node_modules/
