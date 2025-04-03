@@ -42,31 +42,13 @@ jobs:
       - name: Run tests with coverage
         run: bundle exec rspec
 
+      - name: Generate YARD documentation
+        run: bundle exec yard doc
+
       - name: Upload coverage to Coveralls
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-  yard_docs:
-    runs-on: ubuntu-latest
-    name: Generate and Deploy YARD Docs
-    needs: build
-    if: github.ref == 'refs/heads/master'
-
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.2.2"
-          bundler-cache: true
-
-      - name: Install dependencies
-        run: bundle install
-
-      - name: Generate YARD documentation
-        run: bundle exec yard doc
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
