@@ -63,6 +63,9 @@ jobs:
       - name: Install YARD
         run: gem install yard
 
+      - name: Un-ignore doc/ for this run
+        run: sed -i '/^\/doc$/d' .gitignore
+
       - name: Generate YARD docs
         run: yard doc \
           lib/interactor_support.rb \
