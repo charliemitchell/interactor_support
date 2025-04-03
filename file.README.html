@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: README
+  
+    &mdash; InteractorSupport
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "README";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="file_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'>
+<h1 id="label-InteractorSupport+-F0-9F-9A-80"><strong>InteractorSupport</strong> 🚀</h1>
+
+<p>Make your <strong>Rails interactors</strong> clean, powerful, and less error-prone!</p>
+
+<p><a href="rdoc-image:https://coveralls.io/repos/github/charliemitchell/interactor_support/badge.svg" target="_parent" title="rdoc-image:https://coveralls.io/repos/github/charliemitchell/interactor_support/badge.svg">rdoc-image:https://coveralls.io/repos/github/charliemitchell/interactor_support/badge.svg</a>[https://coveralls.io/github/charliemitchell/interactor_support]<br> <a href="rdoc-image:https://github.com/charliemitchell/interactor_support/actions/workflows/main.yml/badge.svg?branch=master" target="_parent" title="rdoc-image:https://github.com/charliemitchell/interactor_support/actions/workflows/main.yml/badge.svg?branch=master">rdoc-image:https://github.com/charliemitchell/interactor_support/actions/workflows/main.yml/badge.svg?branch=master</a>[https://github.com/charliemitchell/interactor_support/actions/workflows/main.yml]<br> <a href="https://app.codacy.com/gh/charliemitchell/interactor_support/dashboard?utm_source=gh&amp;utm_medium=referral&amp;utm_content=&amp;utm_campaign=Badge_grade"><img src="https://app.codacy.com/project/badge/Grade/2a0750b6e87b4a288f568d49d45f6a6c"></a></p>
+<hr>
+
+<h2 id="label-F0-9F-9A-80+What+Is+InteractorSupport-3F">🚀 <strong>What Is InteractorSupport?</strong></h2>
+
+<p><code>InteractorSupport</code> <strong>extends the Interactor pattern</strong> to make your <strong>business logic more concise, expressive, and robust.</strong></p>
+
+<h3 id="label-E2-9C-85+Why+Use+It-3F">✅ <strong>Why Use It?</strong></h3>
+<ul><li>
+<p><strong>Automatic Validations</strong> – Validate inputs before execution</p>
+</li><li>
+<p><strong>Data Transformations</strong> – Trim, downcase, and sanitize with ease</p>
+</li><li>
+<p><strong>Transactional Execution</strong> – Keep data safe with rollback support</p>
+</li><li>
+<p><strong>Conditional Skipping</strong> – Skip execution based on logic</p>
+</li><li>
+<p><strong>Auto Record Lookup &amp; Updates</strong> – Reduce boilerplate code</p>
+</li><li>
+<p><strong>Request Objects</strong> – Lean on <strong>ActiveModel</strong> for structured, validated inputs</p>
+</li></ul>
+<hr>
+
+<h2 id="label-F0-9F-93-A6+Installation">📦 <strong>Installation</strong></h2>
+
+<p>Add to your Gemfile:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>interactor_support</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>~&gt; 1.0</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&gt;= 1.0.1</span><span class='tstring_end'>&#39;</span></span>
+</code></pre>
+
+<p>Or install manually:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_install'>install</span> <span class='id identifier rubyid_interactor_support'>interactor_support</span>
+</code></pre>
+
+<p>It is reccommended that you use Rails 7.1.x and above with this gem. However, it will work with older versions of rails. You may encounter the issue below when using Rails versions prior to 7.1.</p>
+
+<pre class="code ruby"><code class="ruby">&lt;module:LoggerThreadSafeLevel&gt;: uninitialized constant ActiveSupport::LoggerThreadSafeLevel::Logger (NameError)
+</code></pre>
+
+<p>In that case, you need to add <code>require &quot;logger&quot;</code> as the first line to your <code>boot.rb file</code> or pin the concurrent-ruby version to <code>gem &#39;concurrent-ruby&#39;, &#39;1.3.4&#39;</code>. If feasible, consider upgrading your Rails application to version 7.1 or newer, where this compatibility issue has been addressed.</p>
+<hr>
+
+<h2 id="label-F0-9F-9A-A6+Getting+Started">🚦 <strong>Getting Started</strong></h2>
+
+<h3 id="label-The+Problem-3A+Messy+Interactors"><strong>The Problem: Messy Interactors</strong></h3>
+
+<p>Without <code>InteractorSupport</code></p>
+
+<pre class="code ruby"><code class="ruby"><span class='kw'>class</span> <span class='const'>UpdateTodoTitle</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'>Interactor</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_call'>call</span>
+    <span class='id identifier rubyid_todo'>todo</span> <span class='op'>=</span> <span class='const'>Todo</span><span class='period'>.</span><span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_todo_id'>todo_id</span><span class='rparen'>)</span>
+    <span class='kw'>return</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_fail!'>fail!</span><span class='lparen'>(</span><span class='label'>error:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Todo not found</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_todo'>todo</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+
+    <span class='id identifier rubyid_todo'>todo</span><span class='period'>.</span><span class='id identifier rubyid_update!'>update!</span><span class='lparen'>(</span><span class='label'>title:</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_title'>title</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span><span class='comma'>,</span> <span class='label'>completed:</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_completed'>completed</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_todo'>todo</span> <span class='op'>=</span> <span class='id identifier rubyid_todo'>todo</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p><strong>Problems:</strong></p>
+
+<p>❌ Repetitive boilerplate<br> ❌ Manual failure handling<br> ❌ No automatic transformations</p>
+<hr>
+
+<h3 id="label-The+Solution-3A+InteractorSupport"><strong>The Solution: InteractorSupport</strong></h3>
+
+<p>With InteractorSupport, your interactor is now elegant and expressive:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='kw'>class</span> <span class='const'>UpdateTodoTitle</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'>Interactor</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span>
+
+  <span class='id identifier rubyid_required'>required</span> <span class='symbol'>:todo_id</span><span class='comma'>,</span> <span class='symbol'>:title</span>
+  <span class='id identifier rubyid_transform'>transform</span> <span class='symbol'>:title</span><span class='comma'>,</span> <span class='label'>with:</span> <span class='symbol'>:strip</span>
+  <span class='id identifier rubyid_find_by'>find_by</span> <span class='symbol'>:todo</span><span class='comma'>,</span> <span class='label'>query:</span> <span class='lbrace'>{</span> <span class='label'>id:</span> <span class='symbol'>:todo_id</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span>
+  <span class='id identifier rubyid_update'>update</span> <span class='symbol'>:todo</span><span class='comma'>,</span> <span class='label'>attributes:</span> <span class='lbrace'>{</span> <span class='label'>title:</span> <span class='symbol'>:title</span> <span class='rbrace'>}</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_call'>call</span>
+    <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Todo updated!</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p><strong>🚀 What changed?</strong></p>
+
+<p>✅ Self documenting validation using <code>requires</code> ✅ Trimmed the title with <code>transform</code> ✅ Automatic record lookup with <code>find_by</code> ✅ Automatic update with <code>update</code></p>
+
+<h3 id="label-Making+it+even+more+powerful">Making it even more powerful</h3>
+
+<pre class="code ruby"><code class="ruby"><span class='kw'>class</span> <span class='const'>CompleteTodo</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'>Interactor</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span>
+
+  <span class='id identifier rubyid_transaction'>transaction</span>
+  <span class='id identifier rubyid_required'>required</span> <span class='symbol'>:todo_id</span>
+  <span class='id identifier rubyid_find_by'>find_by</span> <span class='symbol'>:todo</span><span class='comma'>,</span> <span class='label'>query:</span> <span class='lbrace'>{</span> <span class='label'>id:</span> <span class='symbol'>:todo_id</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span>
+
+  <span class='id identifier rubyid_update'>update</span> <span class='symbol'>:todo</span><span class='comma'>,</span> <span class='label'>attributes:</span> <span class='lbrace'>{</span>
+    <span class='label'>completed:</span> <span class='kw'>true</span><span class='comma'>,</span>
+    <span class='label'>completed_at:</span> <span class='tlambda'>-&gt;</span> <span class='tlambeg'>{</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_current'>current</span> <span class='rbrace'>}</span>
+  <span class='rbrace'>}</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>✅ Wraps the interactor in an active record transaction ✅ Self documenting validation using <code>requires</code> ✅ Automatic record lookup with <code>find_by</code> ✅ Automatic update with <code>update</code> using static values, and a context aware lambda.</p>
+
+<h3 id="label-Skipping+execution+when+it-27s+not+needed">Skipping execution when it’s not needed</h3>
+
+<pre class="code ruby"><code class="ruby"><span class='kw'>class</span> <span class='const'>CompleteTodo</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'>Interactor</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span>
+
+  <span class='id identifier rubyid_transaction'>transaction</span>
+  <span class='id identifier rubyid_required'>required</span> <span class='symbol'>:todo</span>
+  <span class='id identifier rubyid_skip'>skip</span> <span class='label'>if:</span> <span class='tlambda'>-&gt;</span> <span class='tlambeg'>{</span> <span class='id identifier rubyid_todo'>todo</span><span class='period'>.</span><span class='id identifier rubyid_completed?'>completed?</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_update'>update</span> <span class='symbol'>:todo</span><span class='comma'>,</span> <span class='label'>attributes:</span> <span class='lbrace'>{</span> <span class='label'>completed:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>completed_at:</span> <span class='tlambda'>-&gt;</span> <span class='tlambeg'>{</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_current'>current</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<h2 id="label-F0-9F-93-9C+Request+Objects+-E2-80-93+Lean+on+Rails+Conventions">📜 <strong>Request Objects – Lean on Rails Conventions</strong></h2>
+
+<p>Instead of raw hashes, <strong>Request Objects</strong> provide <strong>validation, transformation, and structure</strong>.</p>
+
+<h3 id="label-E2-9C-85+Built+on+ActiveModel">✅ <strong>Built on ActiveModel</strong></h3>
+<ul><li>
+<p>Works just like an <strong>ActiveRecord model</strong></p>
+</li><li>
+<p>Supports <strong>validations</strong> out of the box</p>
+</li><li>
+<p>Automatically <strong>transforms &amp; sanitizes</strong> data</p>
+</li></ul>
+
+<pre class="code ruby"><code class="ruby"><span class='kw'>class</span> <span class='const'>TodoRequest</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="InteractorSupport/RequestObject.html" title="InteractorSupport::RequestObject (module)">RequestObject</a></span></span>
+
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:title</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='symbol'>:strip</span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:email</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='lbracket'>[</span><span class='symbol'>:strip</span><span class='comma'>,</span> <span class='symbol'>:downcase</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:completed</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'>Boolean</span><span class='comma'>,</span> <span class='label'>default:</span> <span class='kw'>false</span>
+
+  <span class='id identifier rubyid_validates'>validates</span> <span class='symbol'>:title</span><span class='comma'>,</span> <span class='label'>presence:</span> <span class='kw'>true</span>
+  <span class='id identifier rubyid_validates'>validates</span> <span class='symbol'>:email</span><span class='comma'>,</span> <span class='label'>presence:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>format:</span> <span class='lbrace'>{</span> <span class='label'>with:</span> <span class='const'>URI</span><span class='op'>::</span><span class='const'>MailTo</span><span class='op'>::</span><span class='const'>EMAIL_REGEXP</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span>
+</code></pre>
+<hr>
+
+<h2 id="label-F0-9F-93-96+Documentation">📖 <strong>Documentation</strong></h2>
+
+<h3 id="label-Modules+-26+Features"><strong>Modules &amp; Features</strong></h3>
+
+<h4 id="label-F0-9F-94-B9+InteractorSupport-3A-3AConcerns-3A-3AUpdatable">🔹 <strong><code>InteractorSupport::Concerns::Updatable</code></strong></h4>
+
+<p>Provides the <code>update</code> method to <strong>automatically update records</strong> based on context.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># example incantations
+</span><span class='id identifier rubyid_update'>update</span> <span class='symbol'>:todo</span><span class='comma'>,</span> <span class='label'>attributes:</span> <span class='lbrace'>{</span> <span class='label'>title:</span> <span class='symbol'>:title</span> <span class='rbrace'>}</span> <span class='comment'># -&gt; context.todo.update!(title: context.title)
+</span><span class='id identifier rubyid_update'>update</span> <span class='symbol'>:todo</span><span class='comma'>,</span> <span class='label'>attributes:</span> <span class='lbrace'>{</span> <span class='label'>title:</span> <span class='symbol'>:title</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>context_key:</span> <span class='symbol'>:updated_todo</span> <span class='comment'># -&gt; context.updated_todo = context.todo.update!(title: context.title)
+</span><span class='id identifier rubyid_update'>update</span> <span class='symbol'>:todo</span><span class='comma'>,</span> <span class='label'>attributes:</span> <span class='lbrace'>{</span> <span class='label'>request:</span> <span class='lbrace'>{</span> <span class='label'>title:</span> <span class='symbol'>:title</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span> <span class='comment'># -&gt; context.todo.update!(title: context.request.title)
+</span><span class='id identifier rubyid_update'>update</span> <span class='symbol'>:todo</span><span class='comma'>,</span> <span class='label'>attributes:</span> <span class='lbrace'>{</span> <span class='label'>request:</span> <span class='lbracket'>[</span><span class='symbol'>:title</span><span class='comma'>,</span> <span class='symbol'>:completed</span><span class='rbracket'>]</span> <span class='rbrace'>}</span> <span class='comment'># -&gt; context.todo.update!(title: context.request.title, completed: context.request.completed)
+</span><span class='id identifier rubyid_update'>update</span> <span class='symbol'>:todo</span><span class='comma'>,</span> <span class='label'>attributes:</span> <span class='symbol'>:request</span> <span class='comment'># -&gt; context.todo.update!(context.request)
+</span><span class='id identifier rubyid_update'>update</span> <span class='symbol'>:todo</span><span class='comma'>,</span> <span class='label'>attributes:</span> <span class='lbracket'>[</span><span class='symbol'>:title</span><span class='comma'>,</span> <span class='symbol'>:completed</span><span class='rbracket'>]</span> <span class='comment'># -&gt; context.todo.update!(title: context.title, completed: context.completed)
+</span><span class='id identifier rubyid_update'>update</span> <span class='symbol'>:todo</span><span class='comma'>,</span> <span class='label'>attributes:</span> <span class='lbrace'>{</span> <span class='label'>title:</span> <span class='symbol'>:title</span><span class='comma'>,</span> <span class='label'>completed:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>completed_at:</span> <span class='tlambda'>-&gt;</span> <span class='tlambeg'>{</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_zone'>zone</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span> <span class='comment'># -&gt; context.todo.update!(title: context.title, completed: true, completed_at: Time.zone.now)
+</span></code></pre>
+
+<h4 id="label-F0-9F-94-B9+InteractorSupport-3A-3AConcerns-3A-3AFindable">🔹 <strong><code>InteractorSupport::Concerns::Findable</code></strong></h4>
+
+<p>Provides <code>find_by</code> and <code>find_where</code> to <strong>automatically locate records</strong>.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># example incantations
+</span>
+<span class='comment'># Genre.find_by(id: context.genre_id)
+</span><span class='id identifier rubyid_find_by'>find_by</span> <span class='symbol'>:genre</span><span class='comma'>,</span> <span class='label'>context_key:</span> <span class='symbol'>:current_genre</span>
+
+<span class='comment'># lambdas are executed within the interactor&#39;s context, can be anything needed to compute at runtime
+</span><span class='comment'># Genre.find_by(name: context.name, created_at: context.some_context_value )
+</span><span class='id identifier rubyid_find_by'>find_by</span> <span class='symbol'>:genre</span><span class='comma'>,</span> <span class='label'>query:</span> <span class='lbrace'>{</span> <span class='label'>name:</span> <span class='symbol'>:name</span><span class='comma'>,</span> <span class='label'>created_at:</span> <span class='tlambda'>-&gt;</span> <span class='tlambeg'>{</span> <span class='id identifier rubyid_some_context_value'>some_context_value</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+<span class='id identifier rubyid_find_by'>find_by</span> <span class='symbol'>:genre</span><span class='comma'>,</span> <span class='label'>query:</span> <span class='lbrace'>{</span> <span class='label'>name:</span> <span class='symbol'>:name</span><span class='comma'>,</span> <span class='label'>created_at:</span> <span class='tlambda'>-&gt;</span> <span class='tlambeg'>{</span> <span class='int'>7</span><span class='period'>.</span><span class='id identifier rubyid_days'>days</span><span class='period'>.</span><span class='id identifier rubyid_ago'>ago</span><span class='op'>...</span><span class='int'>1</span><span class='period'>.</span><span class='id identifier rubyid_day'>day</span><span class='period'>.</span><span class='id identifier rubyid_ago'>ago</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+
+<span class='comment'># be careful here, this is not advisable.
+</span><span class='id identifier rubyid_find_by'>find_by</span> <span class='symbol'>:genre</span><span class='comma'>,</span> <span class='label'>query:</span> <span class='lbrace'>{</span> <span class='label'>name:</span> <span class='symbol'>:name</span><span class='comma'>,</span> <span class='label'>created_at:</span> <span class='int'>7</span><span class='period'>.</span><span class='id identifier rubyid_days'>days</span><span class='period'>.</span><span class='id identifier rubyid_ago'>ago</span><span class='op'>...</span><span class='int'>1</span><span class='period'>.</span><span class='id identifier rubyid_day'>day</span><span class='period'>.</span><span class='id identifier rubyid_ago'>ago</span> <span class='rbrace'>}</span>
+
+<span class='comment'># Genre.find_by(name: context.name)
+</span><span class='id identifier rubyid_find_by'>find_by</span> <span class='symbol'>:genre</span><span class='comma'>,</span> <span class='label'>query:</span> <span class='lbrace'>{</span> <span class='label'>name:</span> <span class='symbol'>:name</span> <span class='rbrace'>}</span>
+
+<span class='comment'># context.current_genre = Genre.find_by(id: context.genre_id)
+</span><span class='id identifier rubyid_find_by'>find_by</span> <span class='symbol'>:genre</span><span class='comma'>,</span> <span class='label'>context_key:</span> <span class='symbol'>:current_genre</span>
+
+<span class='comment'># Genre.find_by(id: context.genre_id), fails the context if the result is nil
+</span><span class='id identifier rubyid_find_by'>find_by</span> <span class='symbol'>:genre</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span>
+
+<span class='comment'># find_where
+</span><span class='comment'># Post.where(user_id: context.user_id)
+</span><span class='id identifier rubyid_find_where'>find_where</span> <span class='symbol'>:post</span><span class='comma'>,</span> <span class='label'>where:</span> <span class='lbrace'>{</span> <span class='label'>user_id:</span> <span class='symbol'>:user_id</span> <span class='rbrace'>}</span>
+
+<span class='comment'># Same as above, but will fail the context if the results are empty
+</span><span class='id identifier rubyid_find_where'>find_where</span> <span class='symbol'>:post</span><span class='comma'>,</span> <span class='label'>where:</span> <span class='lbrace'>{</span> <span class='label'>user_id:</span> <span class='symbol'>:user_id</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>required:</span> <span class='kw'>true</span>
+
+<span class='comment'># lambdas are executed within the interactor&#39;s context
+</span><span class='comment'># Post.where(user_id: context.user_id, created_at: context.some_context_value )
+</span><span class='id identifier rubyid_find_where'>find_where</span> <span class='symbol'>:post</span><span class='comma'>,</span> <span class='label'>where:</span> <span class='lbrace'>{</span> <span class='label'>user_id:</span> <span class='symbol'>:user_id</span><span class='comma'>,</span> <span class='label'>created_at:</span> <span class='tlambda'>-&gt;</span> <span class='tlambeg'>{</span> <span class='id identifier rubyid_some_context_value'>some_context_value</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+
+<span class='comment'># Post.where(user_id: context.user_id).where.not(active: false)
+</span><span class='id identifier rubyid_find_where'>find_where</span> <span class='symbol'>:post</span><span class='comma'>,</span> <span class='label'>where:</span> <span class='lbrace'>{</span> <span class='label'>user_id:</span> <span class='symbol'>:user_id</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>where_not:</span> <span class='lbrace'>{</span> <span class='label'>active:</span> <span class='kw'>false</span> <span class='rbrace'>}</span>
+
+<span class='comment'># Post.active.where(user_id: context.user_id)
+</span><span class='id identifier rubyid_find_where'>find_where</span> <span class='symbol'>:post</span><span class='comma'>,</span> <span class='label'>where:</span> <span class='lbrace'>{</span> <span class='label'>user_id:</span> <span class='symbol'>:user_id</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>scope:</span> <span class='symbol'>:active</span>
+
+<span class='comment'># context.user_posts = Post.where(user_id: context.user_id)
+</span><span class='id identifier rubyid_find_where'>find_where</span> <span class='symbol'>:post</span><span class='comma'>,</span> <span class='label'>where:</span> <span class='lbrace'>{</span> <span class='label'>user_id:</span> <span class='symbol'>:user_id</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>context_key:</span> <span class='symbol'>:user_posts</span>
+</code></pre>
+
+<h4 id="label-F0-9F-94-B9+InteractorSupport-3A-3AConcerns-3A-3ATransformable">🔹 <strong><code>InteractorSupport::Concerns::Transformable</code></strong></h4>
+
+<p>Provides <code>transform</code> to <strong>sanitize and normalize inputs</strong>.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># any method that the attribute responds to will work
+</span><span class='id identifier rubyid_transform'>transform</span> <span class='symbol'>:title</span><span class='comma'>,</span> <span class='label'>with:</span> <span class='symbol'>:strip</span>
+
+<span class='comment'># You can chain transformers on an attribute
+</span><span class='comment'># show_the_thing == &quot;1&quot; =&gt; &quot;1&quot;.to_i.positive? =&gt; true
+</span><span class='id identifier rubyid_transform'>transform</span> <span class='symbol'>:show_the_thing</span><span class='comma'>,</span> <span class='label'>with:</span> <span class='lbracket'>[</span><span class='symbol'>:to_i</span><span class='comma'>,</span> <span class='symbol'>:positive?</span><span class='rbracket'>]</span>
+
+<span class='comment'># transforming a string to a boolean using a lambda, eg: &quot;true&quot; =&gt; true
+</span><span class='id identifier rubyid_transform'>transform</span> <span class='symbol'>:my_param</span><span class='comma'>,</span> <span class='label'>with:</span> <span class='tlambda'>-&gt;</span> <span class='lparen'>(</span><span class='id identifier rubyid_val'>val</span><span class='rparen'>)</span> <span class='tlambeg'>{</span> <span class='const'>ActiveModel</span><span class='op'>::</span><span class='const'>Type</span><span class='op'>::</span><span class='const'>Boolean</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_cast'>cast</span><span class='lparen'>(</span><span class='id identifier rubyid_val'>val</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+
+<span class='comment'># added in 1.0.2
+</span><span class='comment'># mixing symbols and keys. eg: &quot; True     &quot; =&gt; true
+</span><span class='id identifier rubyid_transform'>transform</span> <span class='symbol'>:my_param</span><span class='comma'>,</span> <span class='label'>with:</span> <span class='lbracket'>[</span>
+  <span class='symbol'>:strip</span><span class='comma'>,</span>
+  <span class='symbol'>:downcase</span><span class='comma'>,</span>
+  <span class='tlambda'>-&gt;</span> <span class='lparen'>(</span><span class='id identifier rubyid_val'>val</span><span class='rparen'>)</span> <span class='tlambeg'>{</span> <span class='const'>ActiveModel</span><span class='op'>::</span><span class='const'>Type</span><span class='op'>::</span><span class='const'>Boolean</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_cast'>cast</span><span class='lparen'>(</span><span class='id identifier rubyid_val'>val</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+<span class='rbracket'>]</span>
+</code></pre>
+
+<h4 id="label-F0-9F-94-B9+InteractorSupport-3A-3AConcerns-3A-3ASkippable">🔹 <strong><code>InteractorSupport::Concerns::Skippable</code></strong></h4>
+
+<p>Allows an interactor to <strong>skip execution</strong> if a condition is met.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># skips execution
+</span><span class='id identifier rubyid_skip'>skip</span> <span class='label'>if:</span> <span class='kw'>true</span>
+<span class='comment'># skips execution when a lambda is passed
+</span><span class='id identifier rubyid_skip'>skip</span> <span class='label'>if:</span> <span class='tlambda'>-&gt;</span> <span class='tlambeg'>{</span> <span class='kw'>true</span> <span class='rbrace'>}</span>
+<span class='comment'># using a method
+</span><span class='id identifier rubyid_skip'>skip</span> <span class='label'>if:</span> <span class='symbol'>:some_method?</span>
+<span class='comment'># using a context variable
+</span><span class='id identifier rubyid_skip'>skip</span> <span class='label'>if:</span> <span class='symbol'>:condition</span>
+
+<span class='comment'># Using `unless`
+</span>
+<span class='comment'># skips execution
+</span><span class='id identifier rubyid_skip'>skip</span> <span class='label'>unless:</span> <span class='kw'>false</span>
+<span class='comment'># skips execution when a lambda is passed
+</span><span class='id identifier rubyid_skip'>skip</span> <span class='label'>unless:</span> <span class='tlambda'>-&gt;</span> <span class='tlambeg'>{</span> <span class='kw'>false</span> <span class='rbrace'>}</span>
+<span class='comment'># using a method
+</span><span class='id identifier rubyid_skip'>skip</span> <span class='label'>unless:</span> <span class='symbol'>:some_method?</span>
+<span class='comment'># using a context variable
+</span><span class='id identifier rubyid_skip'>skip</span> <span class='label'>unless:</span> <span class='symbol'>:condition</span>
+</code></pre>
+
+<h4 id="label-F0-9F-94-B9+InteractorSupport-3A-3AValidations">🔹 <strong><code>InteractorSupport::Validations</code></strong></h4>
+
+<p>Provides <strong>automatic input validation</strong> before execution. This includes <code>ActiveModel::Validations</code> and <code>ActiveModel::Validations::Callbacks</code>, and adds a few extra methods.</p>
+
+<table role="table">
+<thead>
+<tr>
+<th>method</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>required</td>
+<td>a self documenting helper method that registers the attribute as an accessor, applies any active model validations passed to it. If the attribute is missing, it will fail the context</td>
+</tr>
+<tr>
+<td>optional</td>
+<td>a self documenting helper method that registers the attribute as an accessor, applies any active model validations passed to it using ‘:if_assigned`</td>
+</tr>
+<tr>
+<td>validates_after</td>
+<td>An after validator to ensure context consistancy.</td>
+</tr>
+<tr>
+<td>validates_before</td>
+<td>will likely be deprecated in the future.</td>
+</tr>
+</tbody>
+</table>
+
+<pre class="code ruby"><code class="ruby"><span class='kw'>class</span> <span class='const'>CreateUser</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'>Interactor</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span>
+
+  <span class='id identifier rubyid_required'>required</span> <span class='label'>email:</span> <span class='lbrace'>{</span> <span class='label'>format:</span> <span class='lbrace'>{</span> <span class='label'>with:</span> <span class='const'>URI</span><span class='op'>::</span><span class='const'>MailTo</span><span class='op'>::</span><span class='const'>EMAIL_REGEXP</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span><span class='comma'>,</span>
+           <span class='label'>password:</span> <span class='lbrace'>{</span> <span class='label'>length:</span> <span class='lbrace'>{</span> <span class='label'>minimum:</span> <span class='int'>6</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_optional'>optional</span> <span class='label'>age:</span> <span class='lbrace'>{</span> <span class='label'>numericality:</span> <span class='lbrace'>{</span> <span class='label'>greater_than:</span> <span class='int'>18</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_validates_after'>validates_after</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='label'>persisted:</span> <span class='kw'>true</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>✅ email must be present and match a valid format ✅ password must be present and at least 6 characters long ✅ age is optional but must be greater than 18 if provided</p>
+
+<p>If any validation fails, context.fail!(errors: errors.full_messages) will automatically halt execution.</p>
+
+<h4 id="label-F0-9F-94-B9+InteractorSupport-3A-3ARequestObject">🔹 <strong><code>InteractorSupport::RequestObject</code></strong></h4>
+
+<p>Provides structured, validated request objects based on <strong>ActiveModel</strong>.</p>
+
+<p>For now, here’s the specs:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='kw'>class</span> <span class='const'><span class='object_link'><a href="GenreRequest.html" title="GenreRequest (class)">GenreRequest</a></span></span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="InteractorSupport/RequestObject.html" title="InteractorSupport::RequestObject (module)">RequestObject</a></span></span>
+
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:title</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='symbol'>:strip</span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:description</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='symbol'>:strip</span>
+
+  <span class='id identifier rubyid_validates'>validates</span> <span class='symbol'>:title</span><span class='comma'>,</span> <span class='symbol'>:description</span><span class='comma'>,</span> <span class='label'>presence:</span> <span class='kw'>true</span>
+<span class='kw'>end</span>
+
+<span class='kw'>class</span> <span class='const'><span class='object_link'><a href="LocationRequest.html" title="LocationRequest (class)">LocationRequest</a></span></span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="InteractorSupport/RequestObject.html" title="InteractorSupport::RequestObject (module)">RequestObject</a></span></span>
+
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:city</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='lbracket'>[</span><span class='symbol'>:downcase</span><span class='comma'>,</span> <span class='symbol'>:strip</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:country_code</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='lbracket'>[</span><span class='symbol'>:strip</span><span class='comma'>,</span> <span class='symbol'>:upcase</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:state_code</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='lbracket'>[</span><span class='symbol'>:strip</span><span class='comma'>,</span> <span class='symbol'>:upcase</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:postal_code</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='lbracket'>[</span><span class='symbol'>:strip</span><span class='comma'>,</span> <span class='symbol'>:clean_postal_code</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:address</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='symbol'>:strip</span>
+
+  <span class='id identifier rubyid_validates'>validates</span> <span class='symbol'>:city</span><span class='comma'>,</span> <span class='symbol'>:postal_code</span><span class='comma'>,</span> <span class='symbol'>:address</span><span class='comma'>,</span> <span class='label'>presence:</span> <span class='kw'>true</span>
+  <span class='id identifier rubyid_validates'>validates</span> <span class='symbol'>:country_code</span><span class='comma'>,</span> <span class='symbol'>:state_code</span><span class='comma'>,</span> <span class='label'>presence:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>length:</span> <span class='lbrace'>{</span> <span class='label'>is:</span> <span class='int'>2</span> <span class='rbrace'>}</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_clean_postal_code'>clean_postal_code</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\D</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span><span class='lparen'>(</span><span class='int'>5</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span>
+
+<span class='kw'>class</span> <span class='const'><span class='object_link'><a href="AuthorRequest.html" title="AuthorRequest (class)">AuthorRequest</a></span></span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="InteractorSupport/RequestObject.html" title="InteractorSupport::RequestObject (module)">RequestObject</a></span></span>
+
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:name</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='symbol'>:strip</span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:email</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='lbracket'>[</span><span class='symbol'>:strip</span><span class='comma'>,</span> <span class='symbol'>:downcase</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:age</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='symbol'>:to_i</span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:location</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'><span class='object_link'><a href="LocationRequest.html" title="LocationRequest (class)">LocationRequest</a></span></span>
+  <span class='id identifier rubyid_validates_format_of'>validates_format_of</span> <span class='symbol'>:email</span><span class='comma'>,</span> <span class='label'>with:</span> <span class='const'>URI</span><span class='op'>::</span><span class='const'>MailTo</span><span class='op'>::</span><span class='const'>EMAIL_REGEXP</span>
+<span class='kw'>end</span>
+
+<span class='kw'>class</span> <span class='const'><span class='object_link'><a href="PostRequest.html" title="PostRequest (class)">PostRequest</a></span></span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="InteractorSupport/RequestObject.html" title="InteractorSupport::RequestObject (module)">RequestObject</a></span></span>
+
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:user_id</span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:title</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='symbol'>:strip</span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:content</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='symbol'>:strip</span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:genre</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'><span class='object_link'><a href="GenreRequest.html" title="GenreRequest (class)">GenreRequest</a></span></span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:authors</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='const'><span class='object_link'><a href="AuthorRequest.html" title="AuthorRequest (class)">AuthorRequest</a></span></span><span class='comma'>,</span> <span class='label'>array:</span> <span class='kw'>true</span>
+<span class='kw'>end</span>
+
+<span class='const'>RSpec</span><span class='period'>.</span><span class='id identifier rubyid_describe'>describe</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="InteractorSupport/RequestObject.html" title="InteractorSupport::RequestObject (module)">RequestObject</a></span></span><span class='rparen'>)</span> <span class='kw'>do</span>
+  <span class='id identifier rubyid_describe'>describe</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>attribute transformation</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_before'>before</span> <span class='kw'>do</span>
+      <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="InteractorSupport.html#configure-class_method" title="InteractorSupport.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+        <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_request_object_behavior'>request_object_behavior</span> <span class='op'>=</span> <span class='symbol'>:returns_self</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_context'>context</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>when using a single transform</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_it'>it</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>strips the value for a symbol transform</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_genre'>genre</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="GenreRequest.html" title="GenreRequest (class)">GenreRequest</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>title:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  Science Fiction  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>description:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> A genre of speculative fiction  </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_genre'>genre</span><span class='period'>.</span><span class='id identifier rubyid_title'>title</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Science Fiction</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_genre'>genre</span><span class='period'>.</span><span class='id identifier rubyid_description'>description</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>A genre of speculative fiction</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_context'>context</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>when using an array of transforms</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_it'>it</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>applies all transform methods in order</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_buyer'>buyer</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="LocationRequest.html" title="LocationRequest (class)">LocationRequest</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+          <span class='label'>city:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  New York  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+          <span class='label'>country_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  us  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+          <span class='label'>state_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  ny  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+          <span class='label'>postal_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  10001-5432  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+          <span class='label'>address:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  123 Main St.  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='rparen'>)</span>
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_buyer'>buyer</span><span class='period'>.</span><span class='id identifier rubyid_city'>city</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>new york</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_buyer'>buyer</span><span class='period'>.</span><span class='id identifier rubyid_country_code'>country_code</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>US</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_buyer'>buyer</span><span class='period'>.</span><span class='id identifier rubyid_state_code'>state_code</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>NY</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_buyer'>buyer</span><span class='period'>.</span><span class='id identifier rubyid_postal_code'>postal_code</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>10001</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_buyer'>buyer</span><span class='period'>.</span><span class='id identifier rubyid_address'>address</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>123 Main St.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_context'>context</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>when the value does not respond to a transform method</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_it'>it</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>raises and argument error if the transform method is not defined</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+        <span class='kw'>class</span> <span class='const'>DummyRequest</span>
+          <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="InteractorSupport/RequestObject.html" title="InteractorSupport::RequestObject (module)">RequestObject</a></span></span>
+          <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:number</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='symbol'>:strip</span>
+          <span class='id identifier rubyid_validates'>validates</span> <span class='symbol'>:number</span><span class='comma'>,</span> <span class='label'>presence:</span> <span class='kw'>true</span>
+        <span class='kw'>end</span>
+
+        <span class='id identifier rubyid_expect'>expect</span> <span class='lbrace'>{</span> <span class='const'>DummyRequest</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>number:</span> <span class='int'>1234</span><span class='rparen'>)</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_raise_error'>raise_error</span><span class='lparen'>(</span><span class='const'>ArgumentError</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_describe'>describe</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>nesting request objects and array support</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_before'>before</span> <span class='kw'>do</span>
+      <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="InteractorSupport.html#configure-class_method" title="InteractorSupport.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+        <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_request_object_behavior'>request_object_behavior</span> <span class='op'>=</span> <span class='symbol'>:returns_self</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_context'>context</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>when using a type without array</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_it'>it</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>wraps the given hash in the type&#39;s new instance</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_post'>post</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="PostRequest.html" title="PostRequest (class)">PostRequest</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+          <span class='label'>user_id:</span> <span class='int'>1</span><span class='comma'>,</span>
+          <span class='label'>title:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  My First Post  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+          <span class='label'>content:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  This is the content of my first post  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+          <span class='label'>genre:</span> <span class='lbrace'>{</span> <span class='label'>title:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  Science Fiction  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>description:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> A genre of speculative fiction  </span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span><span class='comma'>,</span>
+          <span class='label'>authors:</span> <span class='lbracket'>[</span>
+            <span class='lbrace'>{</span>
+              <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  John Doe  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>email:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>me@mail.com</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>age:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  25  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>location:</span> <span class='lbrace'>{</span>
+                <span class='label'>city:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  New York  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                <span class='label'>country_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  us  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                <span class='label'>state_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  ny  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                <span class='label'>postal_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  10001-5432  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                <span class='label'>address:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  123 Main St.  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='rbrace'>}</span><span class='comma'>,</span>
+            <span class='rbrace'>}</span><span class='comma'>,</span>
+            <span class='lbrace'>{</span>
+              <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  Jane Doe  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>email:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>you@mail.com</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>age:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  25  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>location:</span> <span class='lbrace'>{</span>
+                <span class='label'>city:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  Los Angeles  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                <span class='label'>country_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  us  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                <span class='label'>state_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  ca  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                <span class='label'>postal_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  90001  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                <span class='label'>address:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  456 Elm St.  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='rbrace'>}</span><span class='comma'>,</span>
+            <span class='rbrace'>}</span><span class='comma'>,</span>
+          <span class='rbracket'>]</span><span class='comma'>,</span>
+        <span class='rparen'>)</span>
+
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_post'>post</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_valid'>be_valid</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_post'>post</span><span class='period'>.</span><span class='id identifier rubyid_user_id'>user_id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_post'>post</span><span class='period'>.</span><span class='id identifier rubyid_title'>title</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>My First Post</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_post'>post</span><span class='period'>.</span><span class='id identifier rubyid_content'>content</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>This is the content of my first post</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_post'>post</span><span class='period'>.</span><span class='id identifier rubyid_genre'>genre</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="GenreRequest.html" title="GenreRequest (class)">GenreRequest</a></span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_post'>post</span><span class='period'>.</span><span class='id identifier rubyid_genre'>genre</span><span class='period'>.</span><span class='id identifier rubyid_title'>title</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Science Fiction</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_post'>post</span><span class='period'>.</span><span class='id identifier rubyid_genre'>genre</span><span class='period'>.</span><span class='id identifier rubyid_description'>description</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>A genre of speculative fiction</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_post'>post</span><span class='period'>.</span><span class='id identifier rubyid_authors'>authors</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_an'>be_an</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_post'>post</span><span class='period'>.</span><span class='id identifier rubyid_authors'>authors</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='int'>2</span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_post'>post</span><span class='period'>.</span><span class='id identifier rubyid_authors'>authors</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_author'>author</span><span class='op'>|</span>
+          <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="AuthorRequest.html" title="AuthorRequest (class)">AuthorRequest</a></span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_valid'>be_valid</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='period'>.</span><span class='id identifier rubyid_location'>location</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="LocationRequest.html" title="LocationRequest (class)">LocationRequest</a></span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='period'>.</span><span class='id identifier rubyid_location'>location</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_valid'>be_valid</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='period'>.</span><span class='id identifier rubyid_location'>location</span><span class='period'>.</span><span class='id identifier rubyid_city'>city</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_in'>be_in</span><span class='lparen'>(</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>new york</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>los angeles</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='period'>.</span><span class='id identifier rubyid_location'>location</span><span class='period'>.</span><span class='id identifier rubyid_country_code'>country_code</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>US</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='period'>.</span><span class='id identifier rubyid_location'>location</span><span class='period'>.</span><span class='id identifier rubyid_state_code'>state_code</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_in'>be_in</span><span class='lparen'>(</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>NY</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>CA</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='period'>.</span><span class='id identifier rubyid_location'>location</span><span class='period'>.</span><span class='id identifier rubyid_postal_code'>postal_code</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_in'>be_in</span><span class='lparen'>(</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>10001</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>90001</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='period'>.</span><span class='id identifier rubyid_location'>location</span><span class='period'>.</span><span class='id identifier rubyid_address'>address</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_in'>be_in</span><span class='lparen'>(</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>123 Main St.</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>456 Elm St.</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span>
+        <span class='kw'>end</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_describe'>describe</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>to_context</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_before'>before</span> <span class='kw'>do</span>
+      <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="InteractorSupport.html#configure-class_method" title="InteractorSupport.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+        <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_request_object_behavior'>request_object_behavior</span> <span class='op'>=</span> <span class='symbol'>:returns_self</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_it'>it</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>returns a struct and includes nested attributes</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_context'>context</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="PostRequest.html" title="PostRequest (class)">PostRequest</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+        <span class='label'>user_id:</span> <span class='int'>1</span><span class='comma'>,</span>
+        <span class='label'>title:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  My First Post  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='label'>content:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  This is the content of my first post  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='label'>genre:</span> <span class='lbrace'>{</span> <span class='label'>title:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  Science Fiction  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>description:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> A genre of speculative fiction  </span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span><span class='comma'>,</span>
+        <span class='label'>authors:</span> <span class='lbracket'>[</span>
+          <span class='lbrace'>{</span>
+            <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  John Doe  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='label'>email:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>a@b.com</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='label'>age:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  25  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='label'>location:</span> <span class='lbrace'>{</span>
+              <span class='label'>city:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  New York  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>country_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  us  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>state_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  ny  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>postal_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  10001-5432  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>address:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  123 Main St.  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='rbrace'>}</span><span class='comma'>,</span>
+          <span class='rbrace'>}</span><span class='comma'>,</span>
+        <span class='rbracket'>]</span><span class='comma'>,</span>
+      <span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_context'>to_context</span>
+
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='symbol'>:user_id</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='symbol'>:title</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>My First Post</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='symbol'>:content</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>This is the content of my first post</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='symbol'>:genre</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='symbol'>:genre</span><span class='comma'>,</span> <span class='symbol'>:title</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Science Fiction</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='symbol'>:genre</span><span class='comma'>,</span> <span class='symbol'>:description</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>A genre of speculative fiction</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='symbol'>:authors</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_an'>be_an</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='symbol'>:authors</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_author'>author</span> <span class='op'>=</span> <span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='symbol'>:authors</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>John Doe</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='symbol'>:email</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>a@b.com</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='symbol'>:age</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='int'>25</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='symbol'>:location</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='symbol'>:location</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:city</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>new york</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='symbol'>:location</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:country_code</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>US</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_describe'>describe</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>configured request object behavior</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_it'>it</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>returns a context hash with symbol keys when configured to do so</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+      <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="InteractorSupport.html#configure-class_method" title="InteractorSupport.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+        <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_request_object_behavior'>request_object_behavior</span> <span class='op'>=</span> <span class='symbol'>:returns_context</span>
+        <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_request_object_key_type'>request_object_key_type</span> <span class='op'>=</span> <span class='symbol'>:symbol</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_context'>context</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="PostRequest.html" title="PostRequest (class)">PostRequest</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+        <span class='label'>user_id:</span> <span class='int'>1</span><span class='comma'>,</span>
+        <span class='label'>title:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  My First Post  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='label'>content:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  This is the content of my first post  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='label'>genre:</span> <span class='lbrace'>{</span> <span class='label'>title:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  Science Fiction  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>description:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> A genre of speculative fiction  </span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span><span class='comma'>,</span>
+        <span class='label'>authors:</span> <span class='lbracket'>[</span>
+          <span class='lbrace'>{</span>
+            <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  John Doe  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='label'>email:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>j@j.com</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='label'>age:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  25  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='label'>location:</span> <span class='lbrace'>{</span>
+              <span class='label'>city:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  New York  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>country_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  us  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>state_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  ny  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>postal_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  10001-5432  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>address:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  123 Main St.  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='rbrace'>}</span><span class='comma'>,</span>
+          <span class='rbrace'>}</span><span class='comma'>,</span>
+        <span class='rbracket'>]</span><span class='comma'>,</span>
+      <span class='rparen'>)</span>
+
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='symbol'>:user_id</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='symbol'>:title</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>My First Post</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='symbol'>:content</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>This is the content of my first post</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='symbol'>:genre</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='symbol'>:genre</span><span class='comma'>,</span> <span class='symbol'>:title</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Science Fiction</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='symbol'>:genre</span><span class='comma'>,</span> <span class='symbol'>:description</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>A genre of speculative fiction</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='symbol'>:authors</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_an'>be_an</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='symbol'>:authors</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_author'>author</span> <span class='op'>=</span> <span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='symbol'>:authors</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>John Doe</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='symbol'>:email</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>j@j.com</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='symbol'>:age</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='int'>25</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='symbol'>:location</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='symbol'>:location</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:city</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>new york</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='symbol'>:location</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='symbol'>:country_code</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>US</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_it'>it</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>returns a context hash with string keys when configured to do so</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+      <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="InteractorSupport.html#configure-class_method" title="InteractorSupport.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+        <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_request_object_behavior'>request_object_behavior</span> <span class='op'>=</span> <span class='symbol'>:returns_context</span>
+        <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_request_object_key_type'>request_object_key_type</span> <span class='op'>=</span> <span class='symbol'>:string</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_post'>post</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="PostRequest.html" title="PostRequest (class)">PostRequest</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+        <span class='label'>user_id:</span> <span class='int'>1</span><span class='comma'>,</span>
+        <span class='label'>title:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  My First Post  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='label'>content:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  This is the content of my first post  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='label'>genre:</span> <span class='lbrace'>{</span> <span class='label'>title:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  Science Fiction  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>description:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> A genre of speculative fiction  </span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span><span class='comma'>,</span>
+        <span class='label'>authors:</span> <span class='lbracket'>[</span>
+          <span class='lbrace'>{</span>
+            <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  John Doe  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='label'>email:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>j@j.com</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='label'>age:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  25  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='label'>location:</span> <span class='lbrace'>{</span>
+              <span class='label'>city:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  New York  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>country_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  us  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>state_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  ny  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>postal_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  10001-5432  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>address:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  123 Main St.  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='rbrace'>}</span><span class='comma'>,</span>
+          <span class='rbrace'>}</span><span class='comma'>,</span>
+        <span class='rbracket'>]</span><span class='comma'>,</span>
+      <span class='rparen'>)</span>
+
+      <span class='id identifier rubyid_context'>context</span> <span class='op'>=</span> <span class='id identifier rubyid_post'>post</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>user_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>title</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>My First Post</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>content</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>This is the content of my first post</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>genre</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>genre</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>title</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Science Fiction</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>genre</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>description</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>A genre of speculative fiction</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>authors</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_an'>be_an</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>authors</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_author'>author</span> <span class='op'>=</span> <span class='id identifier rubyid_context'>context</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>authors</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>name</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>John Doe</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>email</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>j@j.com</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>age</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='int'>25</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>location</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>location</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>city</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>new york</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>location</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>country_code</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>US</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_it'>it</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>returns a context struct when configured to do so</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+      <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="InteractorSupport.html#configure-class_method" title="InteractorSupport.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+        <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_request_object_behavior'>request_object_behavior</span> <span class='op'>=</span> <span class='symbol'>:returns_context</span>
+        <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_request_object_key_type'>request_object_key_type</span> <span class='op'>=</span> <span class='symbol'>:struct</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_post'>post</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="PostRequest.html" title="PostRequest (class)">PostRequest</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+        <span class='label'>user_id:</span> <span class='int'>1</span><span class='comma'>,</span>
+        <span class='label'>title:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  My First Post  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='label'>content:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  This is the content of my first post  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+        <span class='label'>genre:</span> <span class='lbrace'>{</span> <span class='label'>title:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  Science Fiction  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>description:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> A genre of speculative fiction  </span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span><span class='comma'>,</span>
+        <span class='label'>authors:</span> <span class='lbracket'>[</span>
+          <span class='lbrace'>{</span>
+            <span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  John Doe  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='label'>email:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>j@j.com</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='label'>age:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  25  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='label'>location:</span> <span class='lbrace'>{</span>
+              <span class='label'>city:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  New York  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>country_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  us  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>state_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  ny  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>postal_code:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  10001-5432  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+              <span class='label'>address:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>  123 Main St.  </span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='rbrace'>}</span><span class='comma'>,</span>
+          <span class='rbrace'>}</span><span class='comma'>,</span>
+        <span class='rbracket'>]</span><span class='comma'>,</span>
+      <span class='rparen'>)</span>
+
+      <span class='id identifier rubyid_context'>context</span> <span class='op'>=</span> <span class='id identifier rubyid_post'>post</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Struct</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_user_id'>user_id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_title'>title</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>My First Post</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_content'>content</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>This is the content of my first post</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_genre'>genre</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Struct</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_genre'>genre</span><span class='period'>.</span><span class='id identifier rubyid_title'>title</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Science Fiction</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_genre'>genre</span><span class='period'>.</span><span class='id identifier rubyid_description'>description</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>A genre of speculative fiction</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_authors'>authors</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_an'>be_an</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_authors'>authors</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_author'>author</span> <span class='op'>=</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_authors'>authors</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Struct</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>John Doe</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='period'>.</span><span class='id identifier rubyid_email'>email</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>j@j.com</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='period'>.</span><span class='id identifier rubyid_age'>age</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='int'>25</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='period'>.</span><span class='id identifier rubyid_location'>location</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_be_a'>be_a</span><span class='lparen'>(</span><span class='const'>Struct</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='period'>.</span><span class='id identifier rubyid_location'>location</span><span class='period'>.</span><span class='id identifier rubyid_city'>city</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>new york</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_expect'>expect</span><span class='lparen'>(</span><span class='id identifier rubyid_author'>author</span><span class='period'>.</span><span class='id identifier rubyid_location'>location</span><span class='period'>.</span><span class='id identifier rubyid_country_code'>country_code</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to'>to</span><span class='lparen'>(</span><span class='id identifier rubyid_eq'>eq</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>US</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<h2 id="label-F0-9F-A4-9D+Contributing">🤝 <strong>Contributing</strong></h2>
+
+<p>Pull requests are welcome on <a href="https://github.com/charliemitchell/interactor_support">GitHub</a>.</p>
+<hr>
+
+<h2 id="label-F0-9F-93-9C+License">📜 <strong>License</strong></h2>
+
+<p>Released under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.</p>
+</div></div>
+
+      <div id="footer">
+  Generated on Thu Apr  3 13:57:46 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.2.2).
+</div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: InteractorSupport::Actions
+  
+    &mdash; InteractorSupport
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "InteractorSupport::Actions";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (A)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span>
+     &raquo; 
+    <span class="title">Actions</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: InteractorSupport::Actions
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  <dl>
+      <dt>Extended by:</dt>
+      <dd>ActiveSupport::Concern</dd>
+  </dl>
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/interactor_support/actions.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>A bundle of DSL-style concerns that enhance interactors with expressive, composable behavior.</p>
+
+<p>This module is intended to be included into an <code>Interactor</code> or <code>Organizer</code>, providing access to a suite of declarative action helpers:</p>
+<ul><li>
+<p>Skippable — Conditionally skip execution</p>
+</li><li>
+<p>Transactionable — Wrap logic in an ActiveRecord transaction</p>
+</li><li>
+<p>Updatable — Update records using context-driven attributes</p>
+</li><li>
+<p>Findable — Find one or many records into context</p>
+</li><li>
+<p>Transformable — Normalize or modify context values before execution</p>
+</li></ul>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'>
+<p>Use in an interactor</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='kw'>class</span> <span class='const'>UpdateUser</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'>Interactor</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="../InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='op'>::</span><span class='const'>Actions</span>
+
+  <span class='id identifier rubyid_find_by'>find_by</span> <span class='symbol'>:user</span>
+
+  <span class='id identifier rubyid_transform'>transform</span> <span class='symbol'>:email</span><span class='comma'>,</span> <span class='label'>with:</span> <span class='lbracket'>[</span><span class='symbol'>:strip</span><span class='comma'>,</span> <span class='symbol'>:downcase</span><span class='rbracket'>]</span>
+
+  <span class='id identifier rubyid_update'>update</span> <span class='symbol'>:user</span><span class='comma'>,</span> <span class='label'>attributes:</span> <span class='lbrace'>{</span> <span class='label'>email:</span> <span class='symbol'>:email</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></code></pre>
+    
+  </div>
+
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="Concerns/Skippable.html" title="InteractorSupport::Concerns::Skippable (module)">Concerns::Skippable</a></span></li>
+    
+      <li><span class='object_link'><a href="Concerns/Transactionable.html" title="InteractorSupport::Concerns::Transactionable (module)">Concerns::Transactionable</a></span></li>
+    
+      <li><span class='object_link'><a href="Concerns/Updatable.html" title="InteractorSupport::Concerns::Updatable (module)">Concerns::Updatable</a></span></li>
+    
+      <li><span class='object_link'><a href="Concerns/Findable.html" title="InteractorSupport::Concerns::Findable (module)">Concerns::Findable</a></span></li>
+    
+      <li><span class='object_link'><a href="Concerns/Transformable.html" title="InteractorSupport::Concerns::Transformable (module)">Concerns::Transformable</a></span></li>
+    
+  </ul>
+
+</div>
+
+
+
+
+
+
+
+  
+
+</div>
+
+      <div id="footer">
+  Generated on Thu Apr  3 13:57:46 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.2.2).
+</div>
+
+    </div>
+  </body>
+</html>

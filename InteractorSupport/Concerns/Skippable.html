@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: InteractorSupport::Concerns::Skippable
+  
+    &mdash; InteractorSupport
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "InteractorSupport::Concerns::Skippable";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (S)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Concerns.html" title="InteractorSupport::Concerns (module)">Concerns</a></span></span>
+     &raquo; 
+    <span class="title">Skippable</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: InteractorSupport::Concerns::Skippable
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  <dl>
+      <dt>Extended by:</dt>
+      <dd>ActiveSupport::Concern</dd>
+  </dl>
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="../Core.html" title="InteractorSupport::Core (module)">InteractorSupport::Core</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/interactor_support/concerns/skippable.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Adds a DSL method to conditionally skip an interactor.</p>
+
+<p>This concern provides a <code>skip</code> method that wraps the interactor in an <code>around</code> block. You can pass an <code>:if</code> or <code>:unless</code> condition using a Proc, Symbol, or literal. The condition will be evaluated at runtime to determine whether to run the interactor.</p>
+<ul><li>
+<p>Symbols will be looked up on the interactor or in the context.</p>
+</li><li>
+<p>Lambdas/Procs are evaluated using <code>instance_exec</code> with full access to context.</p>
+</li></ul>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'>
+<p>Skip if the user is already authenticated (symbol in context)</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_skip'>skip</span> <span class='label'>if:</span> <span class='symbol'>:user_authenticated</span></code></pre>
+    
+      
+        <h5 class="example_title"><div class='inline'>
+<p>Skip unless a method returns true</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_skip'>skip</span> <span class='label'>unless:</span> <span class='symbol'>:should_run?</span></code></pre>
+    
+      
+        <h5 class="example_title"><div class='inline'>
+<p>Skip based on a lambda</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='id identifier rubyid_skip'>skip</span> <span class='label'>if:</span> <span class='tlambda'>-&gt;</span> <span class='tlambeg'>{</span> <span class='id identifier rubyid_mode'>mode</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>test</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span></code></pre>
+    
+  </div>
+
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="../Actions.html" title="InteractorSupport::Actions (module)">Actions</a></span></li>
+    
+  </ul>
+
+</div>
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  <h2>Method Summary</h2>
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Core.html" title="InteractorSupport::Core (module)">InteractorSupport::Core</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Core.html#included-class_method" title="InteractorSupport::Core.included (method)">included</a></span></p>
+
+
+</div>
+
+      <div id="footer">
+  Generated on Thu Apr  3 13:57:46 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.2.2).
+</div>
+
+    </div>
+  </body>
+</html>
