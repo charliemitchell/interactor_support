@@ -99,13 +99,21 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>spec/interactor_support/request_object_spec.rb</dd>
+    <dd>spec/dummy_classes.rb<span class="defines">,<br />
+  spec/support/request_objects.rb</span>
+</dd>
   </dl>
   
 </div>
 
 
 
+
+  <h2>Constant Summary</h2>
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="InteractorSupport/RequestObject.html" title="InteractorSupport::RequestObject (module)">InteractorSupport::RequestObject</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="InteractorSupport/RequestObject.html#SUPPORTED_ACTIVEMODEL_TYPES-constant" title="InteractorSupport::RequestObject::SUPPORTED_ACTIVEMODEL_TYPES (constant)">InteractorSupport::RequestObject::SUPPORTED_ACTIVEMODEL_TYPES</a></span>, <span class='object_link'><a href="InteractorSupport/RequestObject.html#SUPPORTED_PRIMITIVES-constant" title="InteractorSupport::RequestObject::SUPPORTED_PRIMITIVES (constant)">InteractorSupport::RequestObject::SUPPORTED_PRIMITIVES</a></span>, <span class='object_link'><a href="InteractorSupport/RequestObject.html#SUPPORTED_TYPES-constant" title="InteractorSupport::RequestObject::SUPPORTED_TYPES (constant)">InteractorSupport::RequestObject::SUPPORTED_TYPES</a></span></p>
 
 
 
@@ -172,13 +180,13 @@
       <pre class="lines">
 
 
-24
 25
 26
-27</pre>
+27
+28</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'spec/interactor_support/request_object_spec.rb', line 24</span>
+      <pre class="code"><span class="info file"># File 'spec/dummy_classes.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_clean_postal_code'>clean_postal_code</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\D</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -194,7 +202,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Apr  4 15:03:40 2025 by
+  Generated on Fri Apr  4 15:08:16 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.2.2).
 </div>

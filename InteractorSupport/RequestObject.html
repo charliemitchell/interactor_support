@@ -81,7 +81,7 @@
   
   <dl>
     <dt>Included in:</dt>
-    <dd><span class='object_link'><a href="../AuthorRequest.html" title="AuthorRequest (class)">AuthorRequest</a></span>, <span class='object_link'><a href="../GenreRequest.html" title="GenreRequest (class)">GenreRequest</a></span>, <span class='object_link'><a href="../LocationRequest.html" title="LocationRequest (class)">LocationRequest</a></span>, <span class='object_link'><a href="../PostRequest.html" title="PostRequest (class)">PostRequest</a></span></dd>
+    <dd><span class='object_link'><a href="../AuthorRequest.html" title="AuthorRequest (class)">AuthorRequest</a></span>, <span class='object_link'><a href="../GenreRequest.html" title="GenreRequest (class)">GenreRequest</a></span>, <span class='object_link'><a href="../ImageUploadRequest.html" title="ImageUploadRequest (class)">ImageUploadRequest</a></span>, <span class='object_link'><a href="../LocationRequest.html" title="LocationRequest (class)">LocationRequest</a></span>, <span class='object_link'><a href="../PostRequest.html" title="PostRequest (class)">PostRequest</a></span>, <span class='object_link'><a href="../TypeRequest.html" title="TypeRequest (class)">TypeRequest</a></span></dd>
   </dl>
   
 
@@ -98,7 +98,7 @@
     
 <p>A base module for building validated, transformable, and optionally nested request objects.</p>
 
-<p>It builds on top of <code>ActiveModel::Model</code>, adds coercion, default values, attribute transforms, and automatic context conversion (via <code>#to_context</code>). It integrates tightly with <code>InteractorSupport::Configuration</code> to control return behavior and key formatting.</p>
+<p>It builds on top of <code>ActiveModel::Model</code>, adds coercion, default values, attribute transforms, key rewriting, and automatic context conversion (via <code>#to_context</code>). It integrates tightly with <code>InteractorSupport::Configuration</code> to control return behavior and key formatting.</p>
 
 
   </div>
@@ -110,7 +110,7 @@
     
       
         <h5 class="example_title"><div class='inline'>
-<p>Simple usage</p>
+<p>Basic usage</p>
 </div></h5>
       
       <pre class="example code"><code><span class='kw'>class</span> <span class='const'>CreateUserRequest</span>
@@ -124,6 +124,19 @@
 <span class='const'>CreateUserRequest</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> JOHN </span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>email:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>hi@example.com</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 <span class='comment'># =&gt; { name: &quot;john&quot;, email: &quot;hi@example.com&quot;, metadata: {} }</span></code></pre>
     
+      
+        <h5 class="example_title"><div class='inline'>
+<p>Key rewriting</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='kw'>class</span> <span class='const'>UploadRequest</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="../InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='op'>::</span><span class='const'>RequestObject</span>
+
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:image</span><span class='comma'>,</span> <span class='label'>rewrite:</span> <span class='symbol'>:image_url</span>
+<span class='kw'>end</span>
+
+<span class='const'>UploadRequest</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>image:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>url</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_image_url'>image_url</span> <span class='comment'># =&gt; &quot;url&quot;</span></code></pre>
+    
   </div>
 
 
@@ -134,7 +147,43 @@
     
   </ul>
 
-</div>
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="RequestObject/TypeError.html" title="InteractorSupport::RequestObject::TypeError (class)">TypeError</a></span>
+    
+  
+</p>
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="SUPPORTED_ACTIVEMODEL_TYPES-constant" class="">SUPPORTED_ACTIVEMODEL_TYPES =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'>ActiveModel</span><span class='op'>::</span><span class='const'>Type</span><span class='period'>.</span><span class='id identifier rubyid_registry'>registry</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='symbol'>:registrations</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_type'>type</span><span class='op'>|</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_type'>type</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span></pre></dd>
+      
+        <dt id="SUPPORTED_PRIMITIVES-constant" class="">SUPPORTED_PRIMITIVES =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>AnyClass</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Symbol</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Hash</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Array</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span></pre></dd>
+      
+        <dt id="SUPPORTED_TYPES-constant" class="">SUPPORTED_TYPES =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'><span class='object_link'><a href="#SUPPORTED_PRIMITIVES-constant" title="InteractorSupport::RequestObject::SUPPORTED_PRIMITIVES (constant)">SUPPORTED_PRIMITIVES</a></span></span> <span class='op'>+</span> <span class='const'><span class='object_link'><a href="#SUPPORTED_ACTIVEMODEL_TYPES-constant" title="InteractorSupport::RequestObject::SUPPORTED_ACTIVEMODEL_TYPES (constant)">SUPPORTED_ACTIVEMODEL_TYPES</a></span></span></pre></dd>
+      
+    </dl>
+  
+
 
 
 
@@ -147,7 +196,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Apr  4 15:03:40 2025 by
+  Generated on Fri Apr  4 15:08:15 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.2.2).
 </div>
