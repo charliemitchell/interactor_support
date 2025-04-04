@@ -315,9 +315,29 @@ If any validation fails, context.fail!(errors: errors.full_messages) will automa
 
 #### 🔹 **`InteractorSupport::RequestObject`**
 
-Provides structured, validated request objects based on **ActiveModel**.
+A flexible, form-like abstraction for service object inputs, built on top of ActiveModel. InteractorSupport::RequestObject extends ActiveModel::Model and ActiveModel::Validations to provide structured, validated, and transformed input objects. It adds first-class support for nested objects, type coercion, attribute transformation, and array handling. It's ideal for use with any architecture that benefits from strong input modeling.
 
-For now, here's the specs:
+_RequestObject Enforces Input Integrity, and 🔐 allow-lists attributes by default_
+
+**Features**
+
+- Define attributes with types and transformation pipelines
+- Supports primitive and custom object types
+- Deeply nested input coercion and validation
+- Array support for any type
+- Auto-generated context hashes or structs
+- Key rewriting for internal/external mapping
+- Full ActiveModel validation support
+
+Rather than manually massaging and validating hashes or params in your services, define intent-driven objects that:
+
+- clean incoming values
+- validate data structure and content
+- expose clean interfaces for business logic
+
+🚀 Getting Started
+
+1. Define a Request Object
 
 ```rb
 class GenreRequest
@@ -328,346 +348,184 @@ class GenreRequest
 
   validates :title, :description, presence: true
 end
+```
 
-class LocationRequest
-  include InteractorSupport::RequestObject
+2. Use it in your Interactor, Service, or Controller
 
-  attribute :city, transform: [:downcase, :strip]
-  attribute :country_code, transform: [:strip, :upcase]
-  attribute :state_code, transform: [:strip, :upcase]
-  attribute :postal_code, transform: [:strip, :clean_postal_code]
-  attribute :address, transform: :strip
+```rb
+class GenresController < ApplicationController
+  def create
+    context = SomeOrganizerForCreatingGenres.call(
+      GenreRequest.new(params.permit!) # 😉 request objects are a safe and powerful replacement for strong params
+    )
 
-  validates :city, :postal_code, :address, presence: true
-  validates :country_code, :state_code, presence: true, length: { is: 2 }
-
-  def clean_postal_code(value)
-    value.to_s.gsub(/\D/, '')
-    value.first(5)
+    # render context.genre & handle success? vs failure?
   end
 end
+```
 
+## Attribute Features
+
+#### Transformations:
+
+Apply one or more transformations when values are assigned.
+
+```rb
+attribute :email, transform: [:strip, :downcase]
+```
+
+- You can use any transform that the value can `respond_to?`
+- Define custom transforms as instance methods.
+
+Type Casting:
+Cast inputs to expected types automatically:
+
+```rb
+attribute :age, type: :integer
+attribute :tags, type: :string, array: true
+attribute :config, type: Hash
+attribute :published_at, type: :datetime
+attribute :user, type: User
+```
+
+If the value is already of the expected type, it will just pass through. Otherwise, it will try to cast it.
+If casting fails, or you specify an unsupported type, it will raise an `InteractorSupport::RequestObject::TypeError`
+
+Supported types are
+
+- Any ActiveModel::Type, provided as a symbol.
+- The following primitives, Array, Hash, Symbol
+- RequestObject subclasses (for nesting request objects)
+
+#### Nesting Request Objects
+
+```rb
 class AuthorRequest
   include InteractorSupport::RequestObject
 
-  attribute :name, transform: :strip
-  attribute :email, transform: [:strip, :downcase]
-  attribute :age, transform: :to_i
+  attribute :name
   attribute :location, type: LocationRequest
-  validates_format_of :email, with: URI::MailTo::EMAIL_REGEXP
 end
 
 class PostRequest
   include InteractorSupport::RequestObject
 
-  attribute :user_id
-  attribute :title, transform: :strip
-  attribute :content, transform: :strip
-  attribute :genre, type: GenreRequest
   attribute :authors, type: AuthorRequest, array: true
 end
+```
 
-RSpec.describe(InteractorSupport::RequestObject) do
-  describe 'attribute transformation' do
-    before do
-      InteractorSupport.configure do |config|
-        config.request_object_behavior = :returns_self
-      end
-    end
-    context 'when using a single transform' do
-      it 'strips the value for a symbol transform' do
-        genre = GenreRequest.new(title: '  Science Fiction  ', description: ' A genre of speculative fiction  ')
-        expect(genre.title).to(eq('Science Fiction'))
-        expect(genre.description).to(eq('A genre of speculative fiction'))
-      end
-    end
+Nested objects are instantiated recursively and validated automatically.
 
-    context 'when using an array of transforms' do
-      it 'applies all transform methods in order' do
-        buyer = LocationRequest.new(
-          city: '  New York  ',
-          country_code: '  us  ',
-          state_code: '  ny  ',
-          postal_code: '  10001-5432  ',
-          address: '  123 Main St.  ',
-        )
-        expect(buyer.city).to(eq('new york'))
-        expect(buyer.country_code).to(eq('US'))
-        expect(buyer.state_code).to(eq('NY'))
-        expect(buyer.postal_code).to(eq('10001'))
-        expect(buyer.address).to(eq('123 Main St.'))
-      end
-    end
+## Rewrite Keys
 
-    context 'when the value does not respond to a transform method' do
-      it 'raises and argument error if the transform method is not defined' do
-        class DummyRequest
-          include InteractorSupport::RequestObject
-          attribute :number, transform: :strip
-          validates :number, presence: true
-        end
+Rename external keys for internal use.
 
-        expect { DummyRequest.new(number: 1234) }.to(raise_error(ArgumentError))
-      end
-    end
-  end
+```rb
+attribute :image, rewrite: :image_url, transform: :strip
 
-  describe 'nesting request objects and array support' do
-    before do
-      InteractorSupport.configure do |config|
-        config.request_object_behavior = :returns_self
-      end
-    end
-    context 'when using a type without array' do
-      it "wraps the given hash in the type's new instance" do
-        post = PostRequest.new(
-          user_id: 1,
-          title: '  My First Post  ',
-          content: '  This is the content of my first post  ',
-          genre: { title: '  Science Fiction  ', description: ' A genre of speculative fiction  ' },
-          authors: [
-            {
-              name: '  John Doe  ',
-              email: 'me@mail.com',
-              age: '  25  ',
-              location: {
-                city: '  New York  ',
-                country_code: '  us  ',
-                state_code: '  ny  ',
-                postal_code: '  10001-5432  ',
-                address: '  123 Main St.  ',
-              },
-            },
-            {
-              name: '  Jane Doe  ',
-              email: 'you@mail.com',
-              age: '  25  ',
-              location: {
-                city: '  Los Angeles  ',
-                country_code: '  us  ',
-                state_code: '  ca  ',
-                postal_code: '  90001  ',
-                address: '  456 Elm St.  ',
-              },
-            },
-          ],
-        )
+request = ImageUploadRequest.new(image: '  https://url.com  ')
+request.image_url # => "https://url.com"
+request.respond_to?(:image) # => false
+```
 
-        expect(post).to(be_valid)
-        expect(post.user_id).to(eq(1))
-        expect(post.title).to(eq('My First Post'))
-        expect(post.content).to(eq('This is the content of my first post'))
-        expect(post.genre).to(be_a(GenreRequest))
-        expect(post.genre.title).to(eq('Science Fiction'))
-        expect(post.genre.description).to(eq('A genre of speculative fiction'))
-        expect(post.authors).to(be_an(Array))
-        expect(post.authors.size).to(eq(2))
-        post.authors.each do |author|
-          expect(author).to(be_a(AuthorRequest))
-          expect(author).to(be_valid)
-          expect(author.location).to(be_a(LocationRequest))
-          expect(author.location).to(be_valid)
-          expect(author.location.city).to(be_in(['new york', 'los angeles']))
-          expect(author.location.country_code).to(eq('US'))
-          expect(author.location.state_code).to(be_in(['NY', 'CA']))
-          expect(author.location.postal_code).to(be_in(['10001', '90001']))
-          expect(author.location.address).to(be_in(['123 Main St.', '456 Elm St.']))
-        end
-      end
-    end
-  end
+## to_context Output
 
-  describe 'to_context' do
-    before do
-      InteractorSupport.configure do |config|
-        config.request_object_behavior = :returns_self
-      end
-    end
-    it 'returns a struct and includes nested attributes' do
-      context = PostRequest.new(
-        user_id: 1,
-        title: '  My First Post  ',
-        content: '  This is the content of my first post  ',
-        genre: { title: '  Science Fiction  ', description: ' A genre of speculative fiction  ' },
-        authors: [
-          {
-            name: '  John Doe  ',
-            email: 'a@b.com',
-            age: '  25  ',
-            location: {
-              city: '  New York  ',
-              country_code: '  us  ',
-              state_code: '  ny  ',
-              postal_code: '  10001-5432  ',
-              address: '  123 Main St.  ',
-            },
-          },
-        ],
-      ).to_context
+Return a nested Hash, Struct, or self:
 
-      expect(context).to(be_a(Hash))
-      expect(context[:user_id]).to(eq(1))
-      expect(context[:title]).to(eq('My First Post'))
-      expect(context[:content]).to(eq('This is the content of my first post'))
-      expect(context[:genre]).to(be_a(Hash))
-      expect(context.dig(:genre, :title)).to(eq('Science Fiction'))
-      expect(context.dig(:genre, :description)).to(eq('A genre of speculative fiction'))
-      expect(context[:authors]).to(be_an(Array))
-      expect(context[:authors].size).to(eq(1))
-      author = context[:authors].first
-      expect(author).to(be_a(Hash))
-      expect(author[:name]).to(eq('John Doe'))
-      expect(author[:email]).to(eq('a@b.com'))
-      expect(author[:age]).to(eq(25))
-      expect(author[:location]).to(be_a(Hash))
-      expect(author[:location][:city]).to(eq('new york'))
-      expect(author[:location][:country_code]).to(eq('US'))
-    end
-  end
+```rb
+# Default
+PostRequest.new(authors: [{ name: "Ruby", location: { city: "Seattle" }}])
+# returns a hash with symbol keys => {:authors=>[{:name=>"Ruby", :location=>{:city=>"Seattle"}}]}
 
-  describe 'configured request object behavior' do
-    it 'returns a context hash with symbol keys when configured to do so' do
-      InteractorSupport.configure do |config|
-        config.request_object_behavior = :returns_context
-        config.request_object_key_type = :symbol
-      end
+# Configure globally
+InteractorSupport.configure do |config|
+  config.request_object_behavior = :returns_context # or :returns_self
+  config.request_object_key_type = :symbol # or :string, :struct
+end
 
-      context = PostRequest.new(
-        user_id: 1,
-        title: '  My First Post  ',
-        content: '  This is the content of my first post  ',
-        genre: { title: '  Science Fiction  ', description: ' A genre of speculative fiction  ' },
-        authors: [
-          {
-            name: '  John Doe  ',
-            email: 'j@j.com',
-            age: '  25  ',
-            location: {
-              city: '  New York  ',
-              country_code: '  us  ',
-              state_code: '  ny  ',
-              postal_code: '  10001-5432  ',
-              address: '  123 Main St.  ',
-            },
-          },
-        ],
-      )
+# request_object_behavior = :returns_context, request_object_key_type = :string
+PostRequest.new(authors: [{ name: "Ruby", location: { city: "Seattle" }}])
+# returns a hash with string keys => {"authors"=>[{"name"=>"Ruby", "location"=>{"city"=>"Seattle"}}]}
 
-      expect(context).to(be_a(Hash))
-      expect(context[:user_id]).to(eq(1))
-      expect(context[:title]).to(eq('My First Post'))
-      expect(context[:content]).to(eq('This is the content of my first post'))
-      expect(context[:genre]).to(be_a(Hash))
-      expect(context.dig(:genre, :title)).to(eq('Science Fiction'))
-      expect(context.dig(:genre, :description)).to(eq('A genre of speculative fiction'))
-      expect(context[:authors]).to(be_an(Array))
-      expect(context[:authors].size).to(eq(1))
-      author = context[:authors].first
-      expect(author).to(be_a(Hash))
-      expect(author[:name]).to(eq('John Doe'))
-      expect(author[:email]).to(eq('j@j.com'))
-      expect(author[:age]).to(eq(25))
-      expect(author[:location]).to(be_a(Hash))
-      expect(author[:location][:city]).to(eq('new york'))
-      expect(author[:location][:country_code]).to(eq('US'))
-    end
+# request_object_behavior = :returns_context, request_object_key_type = :struct
+PostRequest.new(authors: [{ name: "Ruby", location: { city: "Seattle" }}])
+# returns a Struct => #<struct  authors=[{:name=>"Ruby", :location=>{:city=>"Seattle"}}]>
 
-    it 'returns a context hash with string keys when configured to do so' do
-      InteractorSupport.configure do |config|
-        config.request_object_behavior = :returns_context
-        config.request_object_key_type = :string
-      end
+# request_object_behavior = :returns_self, request_object_key_type = :symbol
+request = PostRequest.new(authors: [{ name: "Ruby", location: { city: "Seattle" }}])
+# returns the request object => #<PostRequest  authors=[{:name=>"Ruby", :location=>{:city=>"Seattle"}}]>
+# request.authors.first.location.city => "Seattle"
+# request.to_context => {:authors=>[{:name=>"Ruby", :location=>{:city=>"Seattle"}}]}
+```
 
-      post = PostRequest.new(
-        user_id: 1,
-        title: '  My First Post  ',
-        content: '  This is the content of my first post  ',
-        genre: { title: '  Science Fiction  ', description: ' A genre of speculative fiction  ' },
-        authors: [
-          {
-            name: '  John Doe  ',
-            email: 'j@j.com',
-            age: '  25  ',
-            location: {
-              city: '  New York  ',
-              country_code: '  us  ',
-              state_code: '  ny  ',
-              postal_code: '  10001-5432  ',
-              address: '  123 Main St.  ',
-            },
-          },
-        ],
-      )
+🛡 Replacing Strong Parameters Safely
 
-      context = post
-      expect(context).to(be_a(Hash))
-      expect(context['user_id']).to(eq(1))
-      expect(context['title']).to(eq('My First Post'))
-      expect(context['content']).to(eq('This is the content of my first post'))
-      expect(context['genre']).to(be_a(Hash))
-      expect(context.dig('genre', 'title')).to(eq('Science Fiction'))
-      expect(context.dig('genre', 'description')).to(eq('A genre of speculative fiction'))
-      expect(context['authors']).to(be_an(Array))
-      expect(context['authors'].size).to(eq(1))
-      author = context['authors'].first
-      expect(author).to(be_a(Hash))
-      expect(author['name']).to(eq('John Doe'))
-      expect(author['email']).to(eq('j@j.com'))
-      expect(author['age']).to(eq(25))
-      expect(author['location']).to(be_a(Hash))
-      expect(author['location']['city']).to(eq('new york'))
-      expect(author['location']['country_code']).to(eq('US'))
-    end
+InteractorSupport::RequestObject is a safe, testable, and expressive alternative to Rails’ strong_parameters. While strong_params are great for sanitizing controller input, they tend to:
 
-    it 'returns a context struct when configured to do so' do
-      InteractorSupport.configure do |config|
-        config.request_object_behavior = :returns_context
-        config.request_object_key_type = :struct
-      end
+- Leak into your business logic
+- Lack structure and type safety
+- Require repetitive permit/require declarations
+- Get clumsy with nesting and arrays
 
-      post = PostRequest.new(
-        user_id: 1,
-        title: '  My First Post  ',
-        content: '  This is the content of my first post  ',
-        genre: { title: '  Science Fiction  ', description: ' A genre of speculative fiction  ' },
-        authors: [
-          {
-            name: '  John Doe  ',
-            email: 'j@j.com',
-            age: '  25  ',
-            location: {
-              city: '  New York  ',
-              country_code: '  us  ',
-              state_code: '  ny  ',
-              postal_code: '  10001-5432  ',
-              address: '  123 Main St.  ',
-            },
-          },
-        ],
-      )
+Instead, RequestObject defines the expected shape and behavior of input once, and gives you:
 
-      context = post
-      expect(context).to(be_a(Struct))
-      expect(context.user_id).to(eq(1))
-      expect(context.title).to(eq('My First Post'))
-      expect(context.content).to(eq('This is the content of my first post'))
-      expect(context.genre).to(be_a(Struct))
-      expect(context.genre.title).to(eq('Science Fiction'))
-      expect(context.genre.description).to(eq('A genre of speculative fiction'))
-      expect(context.authors).to(be_an(Array))
-      expect(context.authors.size).to(eq(1))
-      author = context.authors.first
-      expect(author).to(be_a(Struct))
-      expect(author.name).to(eq('John Doe'))
-      expect(author.email).to(eq('j@j.com'))
-      expect(author.age).to(eq(25))
-      expect(author.location).to(be_a(Struct))
-      expect(author.location.city).to(eq('new york'))
-      expect(author.location.country_code).to(eq('US'))
-    end
-  end
+- Input sanitization via transform:
+- Validation via ActiveModel
+- Type coercion (including arrays and nesting)
+- Reusable, composable input classes
+
+StrongParams Example
+
+```rb
+def user_params
+  params.require(:user).permit(:name, :email, :age)
+end
+
+def create
+  user = User.new(user_params)
+  ...
 end
 ```
+
+Even with this, you still have to:
+• Validate formats (like email)
+• Coerce types (:age is still a string!)
+• Repeat this logic elsewhere
+
+**Request Object Equivelent**
+
+```rb
+class UserRequest
+  include InteractorSupport::RequestObject
+
+  attribute :name, transform: :strip
+  attribute :email, transform: [:strip, :downcase]
+  attribute :age, type: :integer # or transform: [:to_i]
+
+  validates :name, presence: true
+  validates_format_of :email, with: URI::MailTo::EMAIL_REGEXP
+end
+```
+
+**Why replace Strong Params?**
+| Feature | Strong Params | Request Object |
+|----------------------------------|---------------------|----------------------|
+| Requires manual permit/require | ✅ Yes | ❌ Not needed |
+| Validates types/formats | ❌ No | ✅ Yes |
+| Handles nested objects | 😬 With effort | ✅ First-class support |
+| Works outside controllers | ❌ Not cleanly | ✅ Perfect for services/interactors |
+| Self-documenting input shape | ❌ No | ✅ Defined via attribute DSL |
+| Testable as a unit | ❌ Not directly | ✅ Easily tested like a form object |
+
+💡 Tip
+
+You can still use params.require(...).permit(...) in the controller if you want to restrict top-level keys, then pass that sanitized hash to your RequestObject:
+
+```rb
+UserRequest.new(params.require(:user).permit(:name, :email, :age))
+```
+
+But with RequestObject, that’s often unnecessary because you’re already defining a schema.
 
 ## 🤝 **Contributing**
 

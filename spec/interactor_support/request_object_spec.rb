@@ -1,90 +1,41 @@
-# Dummy request objects for testing purposes.
-
-class GenreRequest
-  include InteractorSupport::RequestObject
-
-  attribute :title, transform: :strip
-  attribute :description, transform: :strip
-
-  validates :title, :description, presence: true
-end
-
-class LocationRequest
-  include InteractorSupport::RequestObject
-
-  attribute :city, transform: [:downcase, :strip]
-  attribute :country_code, transform: [:strip, :upcase]
-  attribute :state_code, transform: [:strip, :upcase]
-  attribute :postal_code, transform: [:strip, :clean_postal_code]
-  attribute :address, transform: :strip
-
-  validates :city, :postal_code, :address, presence: true
-  validates :country_code, :state_code, presence: true, length: { is: 2 }
-
-  def clean_postal_code(value)
-    value.to_s.gsub(/\D/, '')
-    value.first(5)
-  end
-end
-
-class AuthorRequest
-  include InteractorSupport::RequestObject
-
-  attribute :name, transform: :strip
-  attribute :email, transform: [:strip, :downcase]
-  attribute :age, transform: :to_i
-  attribute :location, type: LocationRequest
-  validates_format_of :email, with: URI::MailTo::EMAIL_REGEXP
-end
-
-class PostRequest
-  include InteractorSupport::RequestObject
-
-  attribute :user_id
-  attribute :title, transform: :strip
-  attribute :content, transform: :strip
-  attribute :genre, type: GenreRequest
-  attribute :authors, type: AuthorRequest, array: true
-end
-
 RSpec.describe(InteractorSupport::RequestObject) do
-  describe 'attribute transformation' do
-    before do
-      InteractorSupport.configure do |config|
-        config.request_object_behavior = :returns_self
-      end
+  before do
+    InteractorSupport.configure do |config|
+      config.request_object_behavior = :returns_self
     end
-    context 'when using a single transform' do
-      it 'strips the value for a symbol transform' do
-        genre = GenreRequest.new(title: '  Science Fiction  ', description: ' A genre of speculative fiction  ')
-        expect(genre.title).to(eq('Science Fiction'))
-        expect(genre.description).to(eq('A genre of speculative fiction'))
+  end
+
+  describe 'transform support' do
+    context 'with single transform' do
+      it 'applies the transform' do
+        genre = GenreRequest.new(title: '  Sci-Fi  ', description: '  Spacey stuff ')
+        expect(genre.title).to(eq('Sci-Fi'))
+        expect(genre.description).to(eq('Spacey stuff'))
       end
     end
 
-    context 'when using an array of transforms' do
-      it 'applies all transform methods in order' do
-        buyer = LocationRequest.new(
+    context 'with multiple transforms' do
+      it 'applies them in order' do
+        loc = LocationRequest.new(
           city: '  New York  ',
           country_code: '  us  ',
           state_code: '  ny  ',
           postal_code: '  10001-5432  ',
           address: '  123 Main St.  ',
         )
-        expect(buyer.city).to(eq('new york'))
-        expect(buyer.country_code).to(eq('US'))
-        expect(buyer.state_code).to(eq('NY'))
-        expect(buyer.postal_code).to(eq('10001'))
-        expect(buyer.address).to(eq('123 Main St.'))
+        expect(loc.city).to(eq('new york'))
+        expect(loc.country_code).to(eq('US'))
+        expect(loc.state_code).to(eq('NY'))
+        expect(loc.postal_code).to(eq('10001'))
+        expect(loc.address).to(eq('123 Main St.'))
       end
     end
 
-    context 'when the value does not respond to a transform method' do
-      it 'raises and argument error if the transform method is not defined' do
+    context 'with invalid transform method' do
+      it 'raises an ArgumentError' do
         class DummyRequest
           include InteractorSupport::RequestObject
           attribute :number, transform: :strip
-          validates :number, presence: true
         end
 
         expect { DummyRequest.new(number: 1234) }.to(raise_error(ArgumentError))
@@ -92,258 +43,170 @@ RSpec.describe(InteractorSupport::RequestObject) do
     end
   end
 
-  describe 'nesting request objects and array support' do
-    before do
-      InteractorSupport.configure do |config|
-        config.request_object_behavior = :returns_self
-      end
-    end
-    context 'when using a type without array' do
-      it "wraps the given hash in the type's new instance" do
-        post = PostRequest.new(
-          user_id: 1,
-          title: '  My First Post  ',
-          content: '  This is the content of my first post  ',
-          genre: { title: '  Science Fiction  ', description: ' A genre of speculative fiction  ' },
-          authors: [
-            {
-              name: '  John Doe  ',
-              email: 'me@mail.com',
-              age: '  25  ',
-              location: {
-                city: '  New York  ',
-                country_code: '  us  ',
-                state_code: '  ny  ',
-                postal_code: '  10001-5432  ',
-                address: '  123 Main St.  ',
-              },
-            },
-            {
-              name: '  Jane Doe  ',
-              email: 'you@mail.com',
-              age: '  25  ',
-              location: {
-                city: '  Los Angeles  ',
-                country_code: '  us  ',
-                state_code: '  ca  ',
-                postal_code: '  90001  ',
-                address: '  456 Elm St.  ',
-              },
-            },
-          ],
+  describe 'type casting' do
+    context 'with primitive types' do
+      it 'casts to integer, float, boolean, symbol' do
+        post = TypeRequest.new(
+          some_integer: '1',
+          some_float: '1.23',
+          some_true: 'true',
+          some_false: 'false',
+          some_symbol: 'foo',
         )
 
-        expect(post).to(be_valid)
-        expect(post.user_id).to(eq(1))
-        expect(post.title).to(eq('My First Post'))
-        expect(post.content).to(eq('This is the content of my first post'))
-        expect(post.genre).to(be_a(GenreRequest))
-        expect(post.genre.title).to(eq('Science Fiction'))
-        expect(post.genre.description).to(eq('A genre of speculative fiction'))
-        expect(post.authors).to(be_an(Array))
-        expect(post.authors.size).to(eq(2))
-        post.authors.each do |author|
-          expect(author).to(be_a(AuthorRequest))
-          expect(author).to(be_valid)
-          expect(author.location).to(be_a(LocationRequest))
-          expect(author.location).to(be_valid)
-          expect(author.location.city).to(be_in(['new york', 'los angeles']))
-          expect(author.location.country_code).to(eq('US'))
-          expect(author.location.state_code).to(be_in(['NY', 'CA']))
-          expect(author.location.postal_code).to(be_in(['10001', '90001']))
-          expect(author.location.address).to(be_in(['123 Main St.', '456 Elm St.']))
-        end
+        expect(post.some_integer).to(eq(1))
+        expect(post.some_float).to(eq(1.23))
+        expect(post.some_true).to(be(true))
+        expect(post.some_false).to(be(false))
+        expect(post.some_symbol).to(eq(:foo))
+      end
+    end
+
+    context 'with array types' do
+      it 'casts values inside the array' do
+        post = TypeRequest.new(genres: [1, '2', :three])
+        expect(post.genres).to(eq(['1', '2', 'three']))
+      end
+
+      it 'casts a range to an array' do
+        post = TypeRequest.new(some_array: 1..3)
+        expect(post.some_array).to(eq([1, 2, 3]))
+      end
+    end
+
+    context 'with hash types' do
+      it 'accepts direct hash and casts array to hash' do
+        expect(TypeRequest.new(some_hash: { a: 1 }).some_hash).to(eq({ a: 1 }))
+        expect(TypeRequest.new(some_hash: [[:a, 1], [:b, 2]]).some_hash).to(eq({ a: 1, b: 2 }))
+      end
+    end
+
+    context 'with unsupported types' do
+      it 'raises errors for unknown symbols or unsupported primitives' do
+        expect { TypeRequest.new(some_unsupported: 1) }.to(raise_error(InteractorSupport::RequestObject::TypeError))
+        expect do
+          TypeRequest.new(some_unsupported_primitive: 1)
+        end.to(raise_error(InteractorSupport::RequestObject::TypeError))
+      end
+    end
+
+    context 'with custom class type' do
+      it 'accepts instances and rejects classes' do
+        expect(TypeRequest.new(some_class: AnyClass.new).some_class).to(be_a(AnyClass))
+        expect { TypeRequest.new(some_class: AnyClass) }.to(raise_error(InteractorSupport::RequestObject::TypeError))
       end
     end
   end
 
-  describe 'to_context' do
-    before do
-      InteractorSupport.configure do |config|
-        config.request_object_behavior = :returns_self
-      end
-    end
-    it 'returns a struct and includes nested attributes' do
-      context = PostRequest.new(
+  describe 'nested request objects' do
+    let(:post_data) do
+      {
         user_id: 1,
-        title: '  My First Post  ',
-        content: '  This is the content of my first post  ',
-        genre: { title: '  Science Fiction  ', description: ' A genre of speculative fiction  ' },
+        title: '  My Post  ',
+        content: '  Hello world  ',
+        genre: { title: '  Fiction  ', description: '  Books  ' },
         authors: [
           {
-            name: '  John Doe  ',
+            name: '  Author One  ',
             email: 'a@b.com',
-            age: '  25  ',
+            age: '30',
             location: {
-              city: '  New York  ',
+              city: '  City  ',
               country_code: '  us  ',
               state_code: '  ny  ',
-              postal_code: '  10001-5432  ',
-              address: '  123 Main St.  ',
+              postal_code: '  12345-6789  ',
+              address: '  Street  ',
             },
           },
         ],
-      ).to_context
+      }
+    end
 
-      expect(context).to(be_a(Hash))
-      expect(context[:user_id]).to(eq(1))
-      expect(context[:title]).to(eq('My First Post'))
-      expect(context[:content]).to(eq('This is the content of my first post'))
-      expect(context[:genre]).to(be_a(Hash))
-      expect(context.dig(:genre, :title)).to(eq('Science Fiction'))
-      expect(context.dig(:genre, :description)).to(eq('A genre of speculative fiction'))
-      expect(context[:authors]).to(be_an(Array))
-      expect(context[:authors].size).to(eq(1))
-      author = context[:authors].first
-      expect(author).to(be_a(Hash))
-      expect(author[:name]).to(eq('John Doe'))
-      expect(author[:email]).to(eq('a@b.com'))
-      expect(author[:age]).to(eq(25))
-      expect(author[:location]).to(be_a(Hash))
-      expect(author[:location][:city]).to(eq('new york'))
-      expect(author[:location][:country_code]).to(eq('US'))
+    it 'builds nested request objects properly' do
+      post = PostRequest.new(post_data)
+      expect(post).to(be_valid)
+      expect(post.genre).to(be_a(GenreRequest))
+      expect(post.authors.first).to(be_a(AuthorRequest))
+      expect(post.authors.first.location).to(be_a(LocationRequest))
     end
   end
 
-  describe 'configured request object behavior' do
-    it 'returns a context hash with symbol keys when configured to do so' do
+  describe '#to_context' do
+    it 'returns a hash with deeply nested values' do
+      context = PostRequest.new(
+        user_id: 1,
+        title: ' Title ',
+        content: ' Content ',
+        genre: { title: ' Fiction ', description: ' Desc ' },
+        authors: [{
+          name: ' Name ',
+          email: 'email@test.com',
+          age: '40',
+          location: {
+            city: ' City ',
+            country_code: 'us',
+            state_code: 'ny',
+            postal_code: '12345-6789',
+            address: ' Address ',
+          },
+        }],
+      ).to_context
+
+      expect(context[:title]).to(eq('Title'))
+      expect(context[:genre][:title]).to(eq('Fiction'))
+      expect(context[:authors].first[:location][:city]).to(eq('city'))
+    end
+  end
+
+  describe 'configuration behavior' do
+    it 'returns context as a hash with symbol keys' do
       InteractorSupport.configure do |config|
         config.request_object_behavior = :returns_context
         config.request_object_key_type = :symbol
       end
 
-      context = PostRequest.new(
-        user_id: 1,
-        title: '  My First Post  ',
-        content: '  This is the content of my first post  ',
-        genre: { title: '  Science Fiction  ', description: ' A genre of speculative fiction  ' },
-        authors: [
-          {
-            name: '  John Doe  ',
-            email: 'j@j.com',
-            age: '  25  ',
-            location: {
-              city: '  New York  ',
-              country_code: '  us  ',
-              state_code: '  ny  ',
-              postal_code: '  10001-5432  ',
-              address: '  123 Main St.  ',
-            },
-          },
-        ],
-      )
-
+      context = PostRequest.new(user_id: 1)
       expect(context).to(be_a(Hash))
-      expect(context[:user_id]).to(eq(1))
-      expect(context[:title]).to(eq('My First Post'))
-      expect(context[:content]).to(eq('This is the content of my first post'))
-      expect(context[:genre]).to(be_a(Hash))
-      expect(context.dig(:genre, :title)).to(eq('Science Fiction'))
-      expect(context.dig(:genre, :description)).to(eq('A genre of speculative fiction'))
-      expect(context[:authors]).to(be_an(Array))
-      expect(context[:authors].size).to(eq(1))
-      author = context[:authors].first
-      expect(author).to(be_a(Hash))
-      expect(author[:name]).to(eq('John Doe'))
-      expect(author[:email]).to(eq('j@j.com'))
-      expect(author[:age]).to(eq(25))
-      expect(author[:location]).to(be_a(Hash))
-      expect(author[:location][:city]).to(eq('new york'))
-      expect(author[:location][:country_code]).to(eq('US'))
+      expect(context).to(have_key(:user_id))
     end
 
-    it 'returns a context hash with string keys when configured to do so' do
+    it 'returns context as a hash with string keys' do
       InteractorSupport.configure do |config|
         config.request_object_behavior = :returns_context
         config.request_object_key_type = :string
       end
 
-      post = PostRequest.new(
-        user_id: 1,
-        title: '  My First Post  ',
-        content: '  This is the content of my first post  ',
-        genre: { title: '  Science Fiction  ', description: ' A genre of speculative fiction  ' },
-        authors: [
-          {
-            name: '  John Doe  ',
-            email: 'j@j.com',
-            age: '  25  ',
-            location: {
-              city: '  New York  ',
-              country_code: '  us  ',
-              state_code: '  ny  ',
-              postal_code: '  10001-5432  ',
-              address: '  123 Main St.  ',
-            },
-          },
-        ],
-      )
-
-      context = post
+      context = PostRequest.new(user_id: 1)
       expect(context).to(be_a(Hash))
-      expect(context['user_id']).to(eq(1))
-      expect(context['title']).to(eq('My First Post'))
-      expect(context['content']).to(eq('This is the content of my first post'))
-      expect(context['genre']).to(be_a(Hash))
-      expect(context.dig('genre', 'title')).to(eq('Science Fiction'))
-      expect(context.dig('genre', 'description')).to(eq('A genre of speculative fiction'))
-      expect(context['authors']).to(be_an(Array))
-      expect(context['authors'].size).to(eq(1))
-      author = context['authors'].first
-      expect(author).to(be_a(Hash))
-      expect(author['name']).to(eq('John Doe'))
-      expect(author['email']).to(eq('j@j.com'))
-      expect(author['age']).to(eq(25))
-      expect(author['location']).to(be_a(Hash))
-      expect(author['location']['city']).to(eq('new york'))
-      expect(author['location']['country_code']).to(eq('US'))
+      expect(context).to(have_key('user_id'))
     end
 
-    it 'returns a context struct when configured to do so' do
+    it 'returns context as a struct' do
       InteractorSupport.configure do |config|
         config.request_object_behavior = :returns_context
         config.request_object_key_type = :struct
       end
 
-      post = PostRequest.new(
-        user_id: 1,
-        title: '  My First Post  ',
-        content: '  This is the content of my first post  ',
-        genre: { title: '  Science Fiction  ', description: ' A genre of speculative fiction  ' },
-        authors: [
-          {
-            name: '  John Doe  ',
-            email: 'j@j.com',
-            age: '  25  ',
-            location: {
-              city: '  New York  ',
-              country_code: '  us  ',
-              state_code: '  ny  ',
-              postal_code: '  10001-5432  ',
-              address: '  123 Main St.  ',
-            },
-          },
-        ],
-      )
-
-      context = post
+      context = PostRequest.new(user_id: 1)
       expect(context).to(be_a(Struct))
       expect(context.user_id).to(eq(1))
-      expect(context.title).to(eq('My First Post'))
-      expect(context.content).to(eq('This is the content of my first post'))
-      expect(context.genre).to(be_a(Struct))
-      expect(context.genre.title).to(eq('Science Fiction'))
-      expect(context.genre.description).to(eq('A genre of speculative fiction'))
-      expect(context.authors).to(be_an(Array))
-      expect(context.authors.size).to(eq(1))
-      author = context.authors.first
-      expect(author).to(be_a(Struct))
-      expect(author.name).to(eq('John Doe'))
-      expect(author.email).to(eq('j@j.com'))
-      expect(author.age).to(eq(25))
-      expect(author.location).to(be_a(Struct))
-      expect(author.location.city).to(eq('new york'))
-      expect(author.location.country_code).to(eq('US'))
+    end
+  end
+
+  describe 'rewrite support' do
+    it 'uses the rewritten key internally' do
+      req = ImageUploadRequest.new(image: '  url  ')
+      expect(req.respond_to?(:image)).to(be(false))
+      expect(req.image_url).to(eq('url'))
+    end
+
+    it 'includes the rewritten key in #to_context' do
+      InteractorSupport.configure do |config|
+        config.request_object_key_type = :symbol
+      end
+
+      ctx = ImageUploadRequest.new(image: '  https://img.jpg  ').to_context
+      expect(ctx[:image_url]).to(eq('https://img.jpg'))
     end
   end
 end

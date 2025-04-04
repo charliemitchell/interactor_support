@@ -11,3 +11,9 @@
 ## [1.0.2] - 2025-03-28
 
 - Added support for mixing symbols and procs in the transformable concern
+
+## [1.0.3] - 2025-04-02
+
+- Added support for rewriting attribute names in a request object
+- Better support for type coersion, using Active model + Array, Hash, and Symbol
+- Better support for `AnyClass` type validations

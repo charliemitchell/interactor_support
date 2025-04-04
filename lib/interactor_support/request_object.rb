@@ -1,13 +1,12 @@
-# lib/interactor_support/request_object.rb
 module InteractorSupport
   ##
   # A base module for building validated, transformable, and optionally nested request objects.
   #
   # It builds on top of `ActiveModel::Model`, adds coercion, default values, attribute transforms,
-  # and automatic context conversion (via `#to_context`). It integrates tightly with
+  # key rewriting, and automatic context conversion (via `#to_context`). It integrates tightly with
   # `InteractorSupport::Configuration` to control return behavior and key formatting.
   #
-  # @example Simple usage
+  # @example Basic usage
   #   class CreateUserRequest
   #     include InteractorSupport::RequestObject
   #
@@ -19,9 +18,24 @@ module InteractorSupport
   #   CreateUserRequest.new(name: " JOHN ", email: "hi@example.com")
   #   # => { name: "john", email: "hi@example.com", metadata: {} }
   #
+  # @example Key rewriting
+  #   class UploadRequest
+  #     include InteractorSupport::RequestObject
+  #
+  #     attribute :image, rewrite: :image_url
+  #   end
+  #
+  #   UploadRequest.new(image: "url").image_url # => "url"
+  #
   # @see InteractorSupport::Configuration
   module RequestObject
     extend ActiveSupport::Concern
+    SUPPORTED_ACTIVEMODEL_TYPES = ActiveModel::Type.registry.send(:registrations).keys.map { |type| ":#{type}" }
+    SUPPORTED_PRIMITIVES = ['AnyClass', 'Symbol', 'Hash', 'Array']
+    SUPPORTED_TYPES = SUPPORTED_PRIMITIVES + SUPPORTED_ACTIVEMODEL_TYPES
+
+    class TypeError < StandardError
+    end
 
     included do
       include ActiveModel::Model
@@ -31,9 +45,18 @@ module InteractorSupport
       ##
       # Initializes the request object and raises if invalid.
       #
+      # Rewritten keys are converted before passing to ActiveModel.
+      #
       # @param attributes [Hash] the input attributes
       # @raise [ActiveModel::ValidationError] if the object is invalid
       def initialize(attributes = {})
+        attributes = attributes.dup
+        self.class.rewritten_attributes.each do |external, internal|
+          if attributes.key?(external)
+            attributes[internal] = attributes.delete(external)
+          end
+        end
+
         super(attributes)
         raise ActiveModel::ValidationError, self unless valid?
       end
@@ -80,32 +103,27 @@ module InteractorSupport
         end
 
         ##
-        # Defines one or more attributes with optional coercion, default values, and transformation.
+        # Defines one or more attributes with optional coercion, default values, transformation,
+        # and an optional `rewrite:` key to rename the underlying attribute.
         #
         # @param names [Array<Symbol>] the attribute names
         # @param type [Class, nil] optional class to coerce the value to (often another request object)
         # @param array [Boolean] whether to treat the input as an array of typed objects
         # @param default [Object] default value if not provided
         # @param transform [Symbol, Array<Symbol>] method(s) to apply to the value
+        # @param rewrite [Symbol, nil] optional internal name to rewrite this attribute to
         #
         # @raise [ArgumentError] if a transform method is not found
-        #
-        # @example Basic with type coercion and transformation
-        #   attribute :name, transform: [:strip, :downcase]
-        #
-        # @example Nested request object
-        #   attribute :address, type: AddressRequest
-        #
-        # @example Array of nested request objects
-        #   attribute :items, type: ItemRequest, array: true
-        def attribute(*names, type: nil, array: false, default: nil, transform: nil)
+        def attribute(*names, type: nil, array: false, default: nil, transform: nil, rewrite: nil)
           names.each do |name|
-            transform_options[name.to_sym] = transform if transform.present?
-            super(name, default: default)
-            original_writer = instance_method("#{name}=")
+            attr_name = rewrite || name
+            rewritten_attributes[name.to_sym] = attr_name if rewrite
+            transform_options[attr_name.to_sym] = transform if transform.present?
 
-            define_method("#{name}=") do |value|
-              # Apply transforms
+            super(attr_name, default: default)
+            original_writer = instance_method("#{attr_name}=")
+
+            define_method("#{attr_name}=") do |value|
               if transform
                 Array(transform).each do |method|
                   if value.respond_to?(method)
@@ -118,18 +136,22 @@ module InteractorSupport
                 end
               end
 
-              # Type coercion
+              # If a `type` is specified, we attempt to cast the `value` to that type
               if type
-                value = if array
-                  Array(value).map { |v| v.is_a?(type) ? v : type.new(v) }
-                else
-                  value.is_a?(type) ? value : type.new(value)
-                end
+                value = array ? Array(value).map { |v| cast_value(v, type) } : cast_value(value, type)
               end
 
               original_writer.bind(self).call(value)
             end
           end
+        end
+
+        ##
+        # Internal map of external attribute names to internal rewritten names.
+        #
+        # @return [Hash{Symbol => Symbol}]
+        def rewritten_attributes
+          @_rewritten_attributes ||= {}
         end
 
         private
@@ -141,6 +163,35 @@ module InteractorSupport
         def transform_options
           @_transform_options ||= {}
         end
+      end
+
+      private
+
+      def cast_value(value, type)
+        return typecast(value, type) if type.is_a?(Symbol)
+        return value if value.is_a?(type)
+        return type.new(value) if type <= InteractorSupport::RequestObject
+
+        typecast(value, type)
+      end
+
+      def typecast(value, type)
+        if type.is_a?(Symbol)
+          ActiveModel::Type.lookup(type).cast(value)
+        elsif type == Symbol
+          value.to_sym
+        elsif type == Array
+          value.to_a
+        elsif type == Hash
+          value.to_h
+        else
+          raise TypeError
+        end
+      rescue ArgumentError
+        message = ":#{type} is not a supported type. Supported types are: #{SUPPORTED_TYPES.join(", ")}"
+        raise TypeError, message
+      rescue
+        raise TypeError, "Cannot cast #{value.inspect} to #{type.name}"
       end
     end
   end
