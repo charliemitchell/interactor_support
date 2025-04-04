@@ -68,19 +68,17 @@ jobs:
 
       - name: Generate YARD docs
         run: yard doc \
-          lib/interactor_support.rb \
-          lib/interactor_support/**/*.rb \
+          lib/**/*.rb \
           --title "InteractorSupport Documentation" \
           --markup markdown \
           --no-private \
           --no-yardopts \
-          --exclude bin/,spec/,test/,config/,db/,vendor/
-
-      - name: Confirm generated YARD docs
-        run: |
-          echo "Current dir: $(pwd)"
-          ls -la
-          ls -la doc
+          --exclude '(^|/)spec/' \
+          --exclude '(^|/)test/' \
+          --exclude '(^|/)bin/' \
+          --exclude '(^|/)config/' \
+          --exclude '(^|/)db/' \
+          --exclude '(^|/)vendor/'
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
