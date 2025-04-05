@@ -17,3 +17,7 @@
 - Added support for rewriting attribute names in a request object
 - Better support for type coersion, using Active model + Array, Hash, and Symbol
 - Better support for `AnyClass` type validations
+
+## [1.0.4] - 2025-04-05
+
+- Added the organizable concern

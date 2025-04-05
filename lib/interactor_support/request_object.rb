@@ -82,6 +82,7 @@ module InteractorSupport
             value
           end
         end
+
         return Struct.new(*attrs.keys).new(*attrs.values) if key_type == :struct
 
         attrs

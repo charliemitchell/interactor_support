@@ -527,6 +527,131 @@ UserRequest.new(params.require(:user).permit(:name, :email, :age))
 
 But with RequestObject, that’s often unnecessary because you’re already defining a schema.
 
+## InteractorSupport::Organizable
+
+The Organizable concern provides utility methods to simplify working with interactors and request objects. It gives you a clean and consistent pattern for extracting, transforming, and preparing parameters for use in service objects or interactors.
+
+Features
+
+- organize: Call interactors with request objects, optionally namespaced under a context_key.
+- request_params: Extract, shape, filter, rename, flatten, and merge incoming params in a clear and declarative way.
+- Built for controllers or service entry points.
+- Rails-native feel — works seamlessly with strong params.
+
+#### API Reference
+
+**#organize(interactor, params:, request_object:, context_key: nil)**
+Calls the given interactor with a request object built from the provided params.
+
+| Argument       | Type          | Description                                                                 |
+| -------------- | ------------- | --------------------------------------------------------------------------- |
+| interactor     | Class         | The interactor to call (.call must be defined).                             |
+| params         | Hash          | Parameters passed to the request object.                                    |
+| request_object | Class         | A request object class that accepts params in its initializer.              |
+| context_key    | Symbol or nil | Optional key to namespace the request object inside the interactor context. |
+
+Examples
+
+```rb
+organize(MyInteractor, params: request_params, request_object: MyRequest)
+
+# => MyInteractor.call(MyRequest.new(params))
+
+organize(MyInteractor, params: request_params, request_object: MyRequest, context_key: :request)
+
+# => MyInteractor.call({ request: MyRequest.new(params) })
+```
+
+#### #request_params(\*top_level_keys, merge: {}, except: [], rewrite: [])
+
+Returns a shaped parameter hash derived from params.permit!. You can extract specific top-level keys, rename them, flatten values, apply defaults, and remove unwanted fields.
+
+| Argument          | Type                             | Description                                                               |
+| ----------------- | -------------------------------- | ------------------------------------------------------------------------- |
+| `*top_level_keys` | `Symbol...`                      | Optional list of top-level keys to include. If omitted, includes all.     |
+| `merge:`          | `Hash`                           | Extra values to merge into the result.                                    |
+| `except:`         | `Array<Symbol or Array<Symbol>>` | Keys or nested key paths to exclude.                                      |
+| `rewrite:`        | `Array<Hash>`                    | Rules for renaming, flattening, filtering, merging, or defaulting values. |
+
+Rewrite Options
+
+Each rewrite entry is a hash in the form { key => options }, where options may include:
+| Option | Type | Description |
+|-----------|---------------------------|-------------------------------------------------------------------|
+| `as` | `Symbol` | Rename the key to a new top-level key. |
+| `only` | `Array<Symbol>` | Include only these subkeys in the result. |
+| `except` | `Array<Symbol>` | Remove these subkeys from the result. |
+| `flatten` | `true` or `Array<Symbol>` | Flatten all subkeys into top-level (or just the specified ones). |
+| `default` | `Hash` | Use this value if the original key is missing or nil. |
+| `merge` | `Hash` | Merge this hash into the result (after filtering and flattening). |
+
+Example: full usage
+
+```rb
+# Incoming params:
+params = {
+  order: {
+    product_id: 1,
+    quantity: 2,
+    internal: "should be removed"
+  },
+  metadata: {
+    source: "mobile",
+    internal: "hidden",
+    location: { ip: "1.2.3.4" }
+  },
+  flags: {
+    foo: true
+  },
+  internal: "global_internal",
+  session: nil
+}
+
+# Incantation:
+request_params(:order, :metadata, :flags, :session,
+  merge: { user: current_user }, # <- Add the user
+  except: [[:order, :internal], :internal], # <- remove `order.internal`, and the top level key `internal`
+  rewrite: [
+    { order: { flatten: true } }, # <- moves all the values from order to top level keys
+    { metadata: { as: :meta, only: [:source, :location], flatten: [:location] } }, # <- Rename metadata to meta, pluck source and location, move location's values to meta
+    { flags: { merge: { debug: true } } }, # <- add flags.debug = true
+    { session: { default: { id: nil } } } # <- create a default value for session
+  ]
+)
+
+# Result
+{
+  product_id: 1,
+  quantity: 2,
+  meta: {
+    source: "mobile",
+    ip: "1.2.3.4"
+  },
+  flags: {
+    foo: true,
+    debug: true
+  },
+  session: {
+    id: nil
+  },
+  user: current_user
+}
+```
+
+⚠️ Array flattening is not supported
+
+Flattening arrays of hashes (e.g., { events: [{ id: 1 }] }) is intentionally not supported to avoid accidental key collisions. If needed, transform such structures manually before passing to request_params.
+
+**Usage**
+
+Include in a controller or service base class
+
+```rb
+class ApplicationController < ActionController::Base
+  include InteractorSupport::Concerns::Organizable
+end
+```
+
 ## 🤝 **Contributing**
 
 Pull requests are welcome on [GitHub](https://github.com/charliemitchell/interactor_support).
