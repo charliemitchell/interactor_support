@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: InteractorSupport::Concerns::Organizable
+  
+    &mdash; InteractorSupport
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "InteractorSupport::Concerns::Organizable";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (O)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Concerns.html" title="InteractorSupport::Concerns (module)">Concerns</a></span></span>
+     &raquo; 
+    <span class="title">Organizable</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: InteractorSupport::Concerns::Organizable
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd>ActiveSupport::Concern</dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/interactor_support/concerns/organizable.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>The <code>Organizable</code> module provides utility methods for organizing interactors and shaping request parameters in a structured way.</p>
+
+<p>It is intended to be included into a controller or a base service class that delegates to interactors using request objects.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'>
+<p>Include in a controller</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='kw'>class</span> <span class='const'>ApplicationController</span> <span class='op'>&lt;</span> <span class='const'>ActionController</span><span class='op'>::</span><span class='const'>Base</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="../../InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='op'>::</span><span class='const'>Organizable</span>
+<span class='kw'>end</span></code></pre>
+    
+  </div>
+
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>Organizable#organize</li>
+    
+      <li>Organizable#request_params</li>
+    
+  </ul>
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#organize-instance_method" title="#organize (instance method)">#<strong>organize</strong>(interactor, params:, request_object:, context_key: nil)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Calls the given interactor with a request object.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#request_params-instance_method" title="#request_params (instance method)">#<strong>request_params</strong>(*top_level_keys, merge: {}, except: [], rewrite: [])  &#x21d2; Hash </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Builds a structured and optionally transformed parameter hash from Rails’ <code>params</code>.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="organize-instance_method">
+  
+    #<strong>organize</strong>(interactor, params:, request_object:, context_key: nil)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>Calls the given interactor with a request object. Optionally wraps the request object under a key in the interactor context.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_organize'>organize</span><span class='lparen'>(</span><span class='const'>MyInteractor</span><span class='comma'>,</span> <span class='label'>params:</span> <span class='id identifier rubyid_request_params'>request_params</span><span class='comma'>,</span> <span class='label'>request_object:</span> <span class='const'>MyRequest</span><span class='rparen'>)</span>
+<span class='comment'># =&gt; Calls MyInteractor with an instance of MyRequest initialized with request_params.</span></code></pre>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_organize'>organize</span><span class='lparen'>(</span><span class='const'>MyInteractor</span><span class='comma'>,</span> <span class='label'>params:</span> <span class='id identifier rubyid_request_params'>request_params</span><span class='comma'>,</span> <span class='label'>request_object:</span> <span class='const'>MyRequest</span><span class='comma'>,</span> <span class='label'>context_key:</span> <span class='symbol'>:request</span><span class='rparen'>)</span>
+<span class='comment'># =&gt; Calls MyInteractor with an instance of MyRequest initialized with request_params at :context_key.
+</span><span class='comment'>#   # =&gt; The context will contain { request: MyRequest.new(request_params) }</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>interactor</span>
+      
+      
+        <span class='type'>(<tt>Class</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The interactor class to call.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>params</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Parameters to initialize the request object.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>request_object</span>
+      
+      
+        <span class='type'>(<tt>Class</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>A request object class that responds to <code>#new(params)</code>.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>context_key</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Optional key to assign the request object under in the context.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+40
+41
+42
+43
+44</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/interactor_support/concerns/organizable.rb', line 40</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_organize'>organize</span><span class='lparen'>(</span><span class='id identifier rubyid_interactor'>interactor</span><span class='comma'>,</span> <span class='label'>params:</span><span class='comma'>,</span> <span class='label'>request_object:</span><span class='comma'>,</span> <span class='label'>context_key:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='ivar'>@context</span> <span class='op'>=</span> <span class='id identifier rubyid_interactor'>interactor</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span>
+    <span class='id identifier rubyid_context_key'>context_key</span> <span class='op'>?</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_context_key'>context_key</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_request_object'>request_object</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='rparen'>)</span> <span class='rbrace'>}</span> <span class='op'>:</span> <span class='id identifier rubyid_request_object'>request_object</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='rparen'>)</span><span class='comma'>,</span>
+  <span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="request_params-instance_method">
+  
+    #<strong>request_params</strong>(*top_level_keys, merge: {}, except: [], rewrite: [])  &#x21d2; <tt>Hash</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Builds a structured and optionally transformed parameter hash from Rails’ <code>params</code>.</p>
+
+<p>This method supports extracting specific top-level keys, applying optional rewrite transformations, merging in additional values, and excluding unwanted keys.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+        <h5 class="example_title"><div class='inline'>
+<p>Extracting a specific top-level key</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='comment'># Given: params = { order: { product_id: 1, quantity: 2 } }
+</span><span class='id identifier rubyid_request_params'>request_params</span><span class='lparen'>(</span><span class='symbol'>:order</span><span class='rparen'>)</span>
+<span class='comment'># =&gt; { order: { product_id: 1, quantity: 2 } }</span></code></pre>
+    
+      
+        <h5 class="example_title"><div class='inline'>
+<p>Without top-level keys (includes all)</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='comment'># Given: params = { order: { product_id: 1 }, app_id: 123 }
+</span><span class='id identifier rubyid_request_params'>request_params</span><span class='lparen'>(</span><span class='rparen'>)</span>
+<span class='comment'># =&gt; { order: { product_id: 1 }, app_id: 123 }</span></code></pre>
+    
+      
+        <h5 class="example_title"><div class='inline'>
+<p>Merging and excluding</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='comment'># Given: params = { order: { product_id: 1, quantity: 2 }, internal: &quot;yes&quot; }
+</span><span class='id identifier rubyid_request_params'>request_params</span><span class='lparen'>(</span><span class='symbol'>:order</span><span class='comma'>,</span> <span class='label'>merge:</span> <span class='lbrace'>{</span> <span class='label'>user_id:</span> <span class='int'>123</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>except:</span> <span class='lbracket'>[</span><span class='lbracket'>[</span><span class='symbol'>:order</span><span class='comma'>,</span> <span class='symbol'>:quantity</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='symbol'>:internal</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+<span class='comment'># =&gt; { order: { product_id: 1 }, user_id: 123 }</span></code></pre>
+    
+      
+        <h5 class="example_title"><div class='inline'>
+<p>Flattening a nested hash into the top-level</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='comment'># Given: params = { order: { product_id: 1, quantity: 2 }, app_id: 123 }
+</span><span class='id identifier rubyid_request_params'>request_params</span><span class='lparen'>(</span><span class='symbol'>:order</span><span class='comma'>,</span> <span class='label'>rewrite:</span> <span class='lbracket'>[</span><span class='lbrace'>{</span> <span class='label'>order:</span> <span class='lbrace'>{</span> <span class='label'>flatten:</span> <span class='kw'>true</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+<span class='comment'># =&gt; { product_id: 1, quantity: 2 }</span></code></pre>
+    
+      
+        <h5 class="example_title"><div class='inline'>
+<p>Rename a top-level key and filter nested keys</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='comment'># Given: params = { metadata: { source: &quot;mobile&quot;, internal: &quot;x&quot; } }
+</span><span class='id identifier rubyid_request_params'>request_params</span><span class='lparen'>(</span><span class='symbol'>:metadata</span><span class='comma'>,</span> <span class='label'>rewrite:</span> <span class='lbracket'>[</span>
+  <span class='lbrace'>{</span> <span class='label'>metadata:</span> <span class='lbrace'>{</span> <span class='label'>as:</span> <span class='symbol'>:meta</span><span class='comma'>,</span> <span class='label'>only:</span> <span class='lbracket'>[</span><span class='symbol'>:source</span><span class='rbracket'>]</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+<span class='rbracket'>]</span><span class='rparen'>)</span>
+<span class='comment'># =&gt; { meta: { source: &quot;mobile&quot; } }</span></code></pre>
+    
+      
+        <h5 class="example_title"><div class='inline'>
+<p>Provide a default value if a key is missing</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='comment'># Given: params = {}
+</span><span class='id identifier rubyid_request_params'>request_params</span><span class='lparen'>(</span><span class='symbol'>:session</span><span class='comma'>,</span> <span class='label'>rewrite:</span> <span class='lbracket'>[</span>
+  <span class='lbrace'>{</span> <span class='label'>session:</span> <span class='lbrace'>{</span> <span class='label'>default:</span> <span class='lbrace'>{</span> <span class='label'>id:</span> <span class='kw'>nil</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+<span class='rbracket'>]</span><span class='rparen'>)</span>
+<span class='comment'># =&gt; { session: { id: nil } }</span></code></pre>
+    
+      
+        <h5 class="example_title"><div class='inline'>
+<p>Merge values into a nested structure</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='comment'># Given: params = { flags: { foo: true } }
+</span><span class='id identifier rubyid_request_params'>request_params</span><span class='lparen'>(</span><span class='symbol'>:flags</span><span class='comma'>,</span> <span class='label'>rewrite:</span> <span class='lbracket'>[</span>
+  <span class='lbrace'>{</span> <span class='label'>flags:</span> <span class='lbrace'>{</span> <span class='label'>merge:</span> <span class='lbrace'>{</span> <span class='label'>debug:</span> <span class='kw'>true</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+<span class='rbracket'>]</span><span class='rparen'>)</span>
+<span class='comment'># =&gt; { flags: { foo: true, debug: true } }</span></code></pre>
+    
+      
+        <h5 class="example_title"><div class='inline'>
+<p>Combine multiple rewrite rules</p>
+</div></h5>
+      
+      <pre class="example code"><code><span class='comment'># Given:
+</span><span class='comment'># params = {
+</span><span class='comment'>#   order: { product_id: 1, quantity: 2 },
+</span><span class='comment'>#   metadata: { source: &quot;mobile&quot;, location: { ip: &quot;1.2.3.4&quot; } },
+</span><span class='comment'>#   tracking: { click_id: &quot;abc&quot;, session_id: &quot;def&quot; }
+</span><span class='comment'># }
+</span><span class='id identifier rubyid_request_params'>request_params</span><span class='lparen'>(</span><span class='symbol'>:order</span><span class='comma'>,</span> <span class='symbol'>:metadata</span><span class='comma'>,</span> <span class='symbol'>:tracking</span><span class='comma'>,</span> <span class='label'>rewrite:</span> <span class='lbracket'>[</span>
+  <span class='lbrace'>{</span> <span class='label'>order:</span> <span class='lbrace'>{</span> <span class='label'>flatten:</span> <span class='kw'>true</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span><span class='comma'>,</span>
+  <span class='lbrace'>{</span> <span class='label'>metadata:</span> <span class='lbrace'>{</span> <span class='label'>as:</span> <span class='symbol'>:meta</span><span class='comma'>,</span> <span class='label'>only:</span> <span class='lbracket'>[</span><span class='symbol'>:source</span><span class='comma'>,</span> <span class='symbol'>:location</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>flatten:</span> <span class='lbracket'>[</span><span class='symbol'>:location</span><span class='rbracket'>]</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+<span class='rbracket'>]</span><span class='rparen'>)</span>
+<span class='comment'># =&gt; {
+</span><span class='comment'>#   product_id: 1,
+</span><span class='comment'>#   quantity: 2,
+</span><span class='comment'>#   meta: { source: &quot;mobile&quot;, ip: &quot;1.2.3.4&quot; },
+</span><span class='comment'>#   tracking: { click_id: &quot;abc&quot;, session_id: &quot;def&quot; }
+</span><span class='comment'># }</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>top_level_keys</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;Symbol&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Top-level keys to extract from <code>params</code>. If empty, all keys are included.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>merge</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>{}</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Additional values to merge into the final result.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>except</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;Symbol, Array&lt;Symbol&gt;&gt;</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>[]</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Keys or nested key paths to exclude from the result.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>rewrite</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&gt;</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>[]</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>A set of transformation rules applied to the top-level keys.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The final, shaped parameters hash.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/interactor_support/concerns/organizable.rb', line 116</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_request_params'>request_params</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_top_level_keys'>top_level_keys</span><span class='comma'>,</span> <span class='label'>merge:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>except:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>rewrite:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_permitted'>permitted</span> <span class='op'>=</span> <span class='id identifier rubyid_params'>params</span><span class='period'>.</span><span class='id identifier rubyid_permit!'>permit!</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span><span class='period'>.</span><span class='id identifier rubyid_deep_symbolize_keys'>deep_symbolize_keys</span>
+  <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='id identifier rubyid_top_level_keys'>top_level_keys</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='op'>?</span> <span class='id identifier rubyid_permitted'>permitted</span><span class='period'>.</span><span class='id identifier rubyid_slice'>slice</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_top_level_keys'>top_level_keys</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_permitted'>permitted</span>
+
+  <span class='id identifier rubyid_apply_rewrites!'>apply_rewrites!</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='id identifier rubyid_rewrite'>rewrite</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_data'>data</span>
+    <span class='period'>.</span><span class='id identifier rubyid_deep_merge'>deep_merge</span><span class='lparen'>(</span><span class='id identifier rubyid_merge'>merge</span><span class='rparen'>)</span>
+    <span class='period'>.</span><span class='id identifier rubyid_then'>then</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_result'>result</span><span class='op'>|</span> <span class='id identifier rubyid_except'>except</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='op'>?</span> <span class='id identifier rubyid_deep_except'>deep_except</span><span class='lparen'>(</span><span class='id identifier rubyid_result'>result</span><span class='comma'>,</span> <span class='id identifier rubyid_except'>except</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_result'>result</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sat Apr  5 19:55:07 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.2.2).
+</div>
+
+    </div>
+  </body>
+</html>

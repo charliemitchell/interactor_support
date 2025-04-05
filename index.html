@@ -586,6 +586,173 @@ end
 
 <p>But with RequestObject, that’s often unnecessary because you’re already defining a schema.</p>
 
+<h2 id="label-InteractorSupport-3A-3AOrganizable">InteractorSupport::Organizable</h2>
+
+<p>The Organizable concern provides utility methods to simplify working with interactors and request objects. It gives you a clean and consistent pattern for extracting, transforming, and preparing parameters for use in service objects or interactors.</p>
+
+<p>Features</p>
+<ul><li>
+<p>organize: Call interactors with request objects, optionally namespaced under a context_key.</p>
+</li><li>
+<p>request_params: Extract, shape, filter, rename, flatten, and merge incoming params in a clear and declarative way.</p>
+</li><li>
+<p>Built for controllers or service entry points.</p>
+</li><li>
+<p>Rails-native feel — works seamlessly with strong params.</p>
+</li></ul>
+
+<h4 id="label-API+Reference">API Reference</h4>
+
+<p><strong>#organize(interactor, params:, request_object:, context_key: nil)</strong> Calls the given interactor with a request object built from the provided params.</p>
+
+<table role="table">
+<thead>
+<tr>
+<th>Argument</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>interactor</td>
+<td>Class</td>
+<td>The interactor to call (.call must be defined).</td>
+</tr>
+<tr>
+<td>params</td>
+<td>Hash</td>
+<td>Parameters passed to the request object.</td>
+</tr>
+<tr>
+<td>request_object</td>
+<td>Class</td>
+<td>A request object class that accepts params in its initializer.</td>
+</tr>
+<tr>
+<td>context_key</td>
+<td>Symbol or nil</td>
+<td>Optional key to namespace the request object inside the interactor context.</td>
+</tr>
+</tbody>
+</table>
+
+<p>Examples</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_organize'>organize</span><span class='lparen'>(</span><span class='const'>MyInteractor</span><span class='comma'>,</span> <span class='label'>params:</span> <span class='id identifier rubyid_request_params'>request_params</span><span class='comma'>,</span> <span class='label'>request_object:</span> <span class='const'>MyRequest</span><span class='rparen'>)</span>
+
+<span class='comment'># =&gt; MyInteractor.call(MyRequest.new(params))
+</span>
+<span class='id identifier rubyid_organize'>organize</span><span class='lparen'>(</span><span class='const'>MyInteractor</span><span class='comma'>,</span> <span class='label'>params:</span> <span class='id identifier rubyid_request_params'>request_params</span><span class='comma'>,</span> <span class='label'>request_object:</span> <span class='const'>MyRequest</span><span class='comma'>,</span> <span class='label'>context_key:</span> <span class='symbol'>:request</span><span class='rparen'>)</span>
+
+<span class='comment'># =&gt; MyInteractor.call({ request: MyRequest.new(params) })
+</span></code></pre>
+
+<h4 id="label-23request_params-28-2Atop_level_keys-2C+merge-3A+-7B-7D-2C+except-3A+-5B-5D-2C+rewrite-3A+-5B-5D-29">#request_params(*top_level_keys, merge: {}, except: [], rewrite: [])</h4>
+
+<p>Returns a shaped parameter hash derived from params.permit!. You can extract specific top-level keys, rename them, flatten values, apply defaults, and remove unwanted fields.</p>
+
+<table role="table">
+<thead>
+<tr>
+<th>Argument</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>‘*top_level_keys`</td>
+<td>‘Symbol…`</td>
+<td>Optional list of top-level keys to include. If omitted, includes all.</td>
+</tr>
+<tr>
+<td>‘merge:`</td>
+<td>‘Hash`</td>
+<td>Extra values to merge into the result.</td>
+</tr>
+<tr>
+<td>‘except:`</td>
+<td>‘Array&lt;Symbol or Array&lt;Symbol&gt;&gt;`</td>
+<td>Keys or nested key paths to exclude.</td>
+</tr>
+<tr>
+<td>‘rewrite:`</td>
+<td>‘Array&lt;Hash&gt;`</td>
+<td>Rules for renaming, flattening, filtering, merging, or defaulting values.</td>
+</tr>
+</tbody>
+</table>
+
+<p>Rewrite Options</p>
+
+<p>Each rewrite entry is a hash in the form { key =&gt; options }, where options may include: | Option | Type | Description | |———–|—————————|——————————————————————-| | <code>as</code> | <code>Symbol</code> | Rename the key to a new top-level key. | | <code>only</code> | <code>Array&lt;Symbol&gt;</code> | Include only these subkeys in the result. | | <code>except</code> | <code>Array&lt;Symbol&gt;</code> | Remove these subkeys from the result. | | <code>flatten</code> | <code>true</code> or <code>Array&lt;Symbol&gt;</code> | Flatten all subkeys into top-level (or just the specified ones). | | <code>default</code> | <code>Hash</code> | Use this value if the original key is missing or nil. | | <code>merge</code> | <code>Hash</code> | Merge this hash into the result (after filtering and flattening). |</p>
+
+<p>Example: full usage</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># Incoming params:
+</span><span class='id identifier rubyid_params'>params</span> <span class='op'>=</span> <span class='lbrace'>{</span>
+  <span class='label'>order:</span> <span class='lbrace'>{</span>
+    <span class='label'>product_id:</span> <span class='int'>1</span><span class='comma'>,</span>
+    <span class='label'>quantity:</span> <span class='int'>2</span><span class='comma'>,</span>
+    <span class='label'>internal:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>should be removed</span><span class='tstring_end'>&quot;</span></span>
+  <span class='rbrace'>}</span><span class='comma'>,</span>
+  <span class='label'>metadata:</span> <span class='lbrace'>{</span>
+    <span class='label'>source:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>mobile</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+    <span class='label'>internal:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>hidden</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+    <span class='label'>location:</span> <span class='lbrace'>{</span> <span class='label'>ip:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>1.2.3.4</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+  <span class='rbrace'>}</span><span class='comma'>,</span>
+  <span class='label'>flags:</span> <span class='lbrace'>{</span>
+    <span class='label'>foo:</span> <span class='kw'>true</span>
+  <span class='rbrace'>}</span><span class='comma'>,</span>
+  <span class='label'>internal:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>global_internal</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+  <span class='label'>session:</span> <span class='kw'>nil</span>
+<span class='rbrace'>}</span>
+
+<span class='comment'># Incantation:
+</span><span class='id identifier rubyid_request_params'>request_params</span><span class='lparen'>(</span><span class='symbol'>:order</span><span class='comma'>,</span> <span class='symbol'>:metadata</span><span class='comma'>,</span> <span class='symbol'>:flags</span><span class='comma'>,</span> <span class='symbol'>:session</span><span class='comma'>,</span>
+  <span class='label'>merge:</span> <span class='lbrace'>{</span> <span class='label'>user:</span> <span class='id identifier rubyid_current_user'>current_user</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='comment'># &lt;- Add the user
+</span>  <span class='label'>except:</span> <span class='lbracket'>[</span><span class='lbracket'>[</span><span class='symbol'>:order</span><span class='comma'>,</span> <span class='symbol'>:internal</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='symbol'>:internal</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='comment'># &lt;- remove `order.internal`, and the top level key `internal`
+</span>  <span class='label'>rewrite:</span> <span class='lbracket'>[</span>
+    <span class='lbrace'>{</span> <span class='label'>order:</span> <span class='lbrace'>{</span> <span class='label'>flatten:</span> <span class='kw'>true</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='comment'># &lt;- moves all the values from order to top level keys
+</span>    <span class='lbrace'>{</span> <span class='label'>metadata:</span> <span class='lbrace'>{</span> <span class='label'>as:</span> <span class='symbol'>:meta</span><span class='comma'>,</span> <span class='label'>only:</span> <span class='lbracket'>[</span><span class='symbol'>:source</span><span class='comma'>,</span> <span class='symbol'>:location</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>flatten:</span> <span class='lbracket'>[</span><span class='symbol'>:location</span><span class='rbracket'>]</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='comment'># &lt;- Rename metadata to meta, pluck source and location, move location&#39;s values to meta
+</span>    <span class='lbrace'>{</span> <span class='label'>flags:</span> <span class='lbrace'>{</span> <span class='label'>merge:</span> <span class='lbrace'>{</span> <span class='label'>debug:</span> <span class='kw'>true</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='comment'># &lt;- add flags.debug = true
+</span>    <span class='lbrace'>{</span> <span class='label'>session:</span> <span class='lbrace'>{</span> <span class='label'>default:</span> <span class='lbrace'>{</span> <span class='label'>id:</span> <span class='kw'>nil</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span> <span class='comment'># &lt;- create a default value for session
+</span>  <span class='rbracket'>]</span>
+<span class='rparen'>)</span>
+
+<span class='comment'># Result
+</span><span class='lbrace'>{</span>
+  <span class='label'>product_id:</span> <span class='int'>1</span><span class='comma'>,</span>
+  <span class='label'>quantity:</span> <span class='int'>2</span><span class='comma'>,</span>
+  <span class='label'>meta:</span> <span class='lbrace'>{</span>
+    <span class='label'>source:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>mobile</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span>
+    <span class='label'>ip:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>1.2.3.4</span><span class='tstring_end'>&quot;</span></span>
+  <span class='rbrace'>}</span><span class='comma'>,</span>
+  <span class='label'>flags:</span> <span class='lbrace'>{</span>
+    <span class='label'>foo:</span> <span class='kw'>true</span><span class='comma'>,</span>
+    <span class='label'>debug:</span> <span class='kw'>true</span>
+  <span class='rbrace'>}</span><span class='comma'>,</span>
+  <span class='label'>session:</span> <span class='lbrace'>{</span>
+    <span class='label'>id:</span> <span class='kw'>nil</span>
+  <span class='rbrace'>}</span><span class='comma'>,</span>
+  <span class='label'>user:</span> <span class='id identifier rubyid_current_user'>current_user</span>
+<span class='rbrace'>}</span>
+</code></pre>
+
+<p>⚠️ Array flattening is not supported</p>
+
+<p>Flattening arrays of hashes (e.g., { events: [{ id: 1 }] }) is intentionally not supported to avoid accidental key collisions. If needed, transform such structures manually before passing to request_params.</p>
+
+<p><strong>Usage</strong></p>
+
+<p>Include in a controller or service base class</p>
+
+<pre class="code ruby"><code class="ruby"><span class='kw'>class</span> <span class='const'>ApplicationController</span> <span class='op'>&lt;</span> <span class='const'>ActionController</span><span class='op'>::</span><span class='const'>Base</span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="InteractorSupport/Concerns.html" title="InteractorSupport::Concerns (module)">Concerns</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="InteractorSupport/Concerns/Organizable.html" title="InteractorSupport::Concerns::Organizable (module)">Organizable</a></span></span>
+<span class='kw'>end</span>
+</code></pre>
+
 <h2 id="label-F0-9F-A4-9D+Contributing">🤝 <strong>Contributing</strong></h2>
 
 <p>Pull requests are welcome on <a href="https://github.com/charliemitchell/interactor_support">GitHub</a>.</p>
@@ -597,7 +764,7 @@ end
 </div></div>
 
       <div id="footer">
-  Generated on Fri Apr  4 15:08:15 2025 by
+  Generated on Sat Apr  5 19:55:06 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.2.2).
 </div>
