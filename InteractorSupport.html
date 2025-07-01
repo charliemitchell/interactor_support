@@ -84,7 +84,7 @@
   <dl>
     <dt>Defined in:</dt>
     <dd>lib/interactor_support.rb<span class="defines">,<br />
-  lib/interactor_support/core.rb,<br /> lib/interactor_support/actions.rb,<br /> lib/interactor_support/version.rb,<br /> lib/interactor_support/validations.rb,<br /> lib/interactor_support/configuration.rb,<br /> lib/interactor_support/request_object.rb,<br /> lib/interactor_support/concerns/findable.rb,<br /> lib/interactor_support/concerns/skippable.rb,<br /> lib/interactor_support/concerns/updatable.rb,<br /> lib/interactor_support/concerns/organizable.rb,<br /> lib/interactor_support/concerns/transformable.rb,<br /> lib/interactor_support/concerns/transactionable.rb</span>
+  lib/interactor_support/core.rb,<br /> lib/interactor_support/errors.rb,<br /> lib/interactor_support/actions.rb,<br /> lib/interactor_support/version.rb,<br /> lib/interactor_support/validations.rb,<br /> lib/interactor_support/configuration.rb,<br /> lib/interactor_support/request_object.rb,<br /> lib/interactor_support/concerns/findable.rb,<br /> lib/interactor_support/concerns/skippable.rb,<br /> lib/interactor_support/concerns/updatable.rb,<br /> lib/interactor_support/concerns/organizable.rb,<br /> lib/interactor_support/concerns/transformable.rb,<br /> lib/interactor_support/concerns/transactionable.rb</span>
 </dd>
   </dl>
   
@@ -105,7 +105,7 @@
 <p class="children">
   
     
-      <strong class="modules">Modules:</strong> <span class='object_link'><a href="InteractorSupport/Actions.html" title="InteractorSupport::Actions (module)">Actions</a></span>, <span class='object_link'><a href="InteractorSupport/Concerns.html" title="InteractorSupport::Concerns (module)">Concerns</a></span>, <span class='object_link'><a href="InteractorSupport/Core.html" title="InteractorSupport::Core (module)">Core</a></span>, <span class='object_link'><a href="InteractorSupport/RequestObject.html" title="InteractorSupport::RequestObject (module)">RequestObject</a></span>, <span class='object_link'><a href="InteractorSupport/Validations.html" title="InteractorSupport::Validations (module)">Validations</a></span>
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="InteractorSupport/Actions.html" title="InteractorSupport::Actions (module)">Actions</a></span>, <span class='object_link'><a href="InteractorSupport/Concerns.html" title="InteractorSupport::Concerns (module)">Concerns</a></span>, <span class='object_link'><a href="InteractorSupport/Core.html" title="InteractorSupport::Core (module)">Core</a></span>, <span class='object_link'><a href="InteractorSupport/Errors.html" title="InteractorSupport::Errors (module)">Errors</a></span>, <span class='object_link'><a href="InteractorSupport/RequestObject.html" title="InteractorSupport::RequestObject (module)">RequestObject</a></span>, <span class='object_link'><a href="InteractorSupport/Validations.html" title="InteractorSupport::Validations (module)">Validations</a></span>
     
   
     
@@ -125,7 +125,7 @@
         <dt id="VERSION-constant" class="">VERSION =
           
         </dt>
-        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>1.0.4</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>1.0.5</span><span class='tstring_end'>&#39;</span></span></pre></dd>
       
     </dl>
   
@@ -241,12 +241,12 @@
       <pre class="lines">
 
 
-68
 69
-70</pre>
+70
+71</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/interactor_support.rb', line 68</span>
+      <pre class="code"><span class="info file"># File 'lib/interactor_support.rb', line 69</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_configuration'>configuration</span>
   <span class='ivar'>@configuration</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="InteractorSupport/Configuration.html" title="InteractorSupport::Configuration (class)">Configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="InteractorSupport/Configuration.html#initialize-instance_method" title="InteractorSupport::Configuration#initialize (method)">new</a></span></span>
@@ -302,13 +302,13 @@
       <pre class="lines">
 
 
-59
 60
 61
-62</pre>
+62
+63</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/interactor_support.rb', line 59</span>
+      <pre class="code"><span class="info file"># File 'lib/interactor_support.rb', line 60</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_configure'>configure</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="InteractorSupport/Configuration.html" title="InteractorSupport::Configuration (class)">Configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="InteractorSupport/Configuration.html#initialize-instance_method" title="InteractorSupport::Configuration#initialize (method)">new</a></span></span>
@@ -324,7 +324,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Apr  5 19:55:07 2025 by
+  Generated on Tue Jul  1 04:25:39 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.2.2).
 </div>

@@ -195,6 +195,8 @@
 <p>Supports <strong>validations</strong> out of the box</p>
 </li><li>
 <p>Automatically <strong>transforms &amp; sanitizes</strong> data</p>
+</li><li>
+<p>Gracefully ignores unknown attributes if configured, with optional logging</p>
 </li></ul>
 
 <pre class="code ruby"><code class="ruby"><span class='kw'>class</span> <span class='const'>TodoRequest</span>
@@ -208,6 +210,29 @@
   <span class='id identifier rubyid_validates'>validates</span> <span class='symbol'>:email</span><span class='comma'>,</span> <span class='label'>presence:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>format:</span> <span class='lbrace'>{</span> <span class='label'>with:</span> <span class='const'>URI</span><span class='op'>::</span><span class='const'>MailTo</span><span class='op'>::</span><span class='const'>EMAIL_REGEXP</span> <span class='rbrace'>}</span>
 <span class='kw'>end</span>
 </code></pre>
+
+<h3 id="label-F0-9F-94-8D+Ignoring+Unknown+Attributes">🔍 Ignoring Unknown Attributes</h3>
+
+<p>To prevent <code>RequestObject</code> from raising an error on unexpected keys, declare <code>ignore_unknown_attributes</code> in your class.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='kw'>class</span> <span class='const'><span class='object_link'><a href="CalendarRequest.html" title="CalendarRequest (class)">CalendarRequest</a></span></span>
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="InteractorSupport/RequestObject.html" title="InteractorSupport::RequestObject (module)">RequestObject</a></span></span>
+
+  <span class='id identifier rubyid_ignore_unknown_attributes'>ignore_unknown_attributes</span>
+
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:start_date</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='symbol'>:date</span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:end_date</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='symbol'>:date</span>
+  <span class='id identifier rubyid_attribute'>attribute</span> <span class='symbol'>:timezone</span><span class='comma'>,</span> <span class='label'>transform:</span> <span class='symbol'>:strip</span>
+
+  <span class='id identifier rubyid_validates'>validates</span> <span class='symbol'>:start_date</span><span class='comma'>,</span> <span class='symbol'>:end_date</span><span class='comma'>,</span> <span class='label'>presence:</span> <span class='kw'>true</span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>Now, if you initialize the request with an unexpected attribute, it will be logged (if logging is enabled) and ignored:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="CalendarRequest.html" title="CalendarRequest (class)">CalendarRequest</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>start_date:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>2025-07-01</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>end_date:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>2025-07-02</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>foo:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>bar</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+<span class='comment'># =&gt; No exception raised; &#39;foo&#39; is ignored.
+</span></code></pre>
 <hr>
 
 <h2 id="label-F0-9F-93-96+Documentation">📖 <strong>Documentation</strong></h2>
@@ -752,6 +777,68 @@ end
   <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="InteractorSupport/Concerns.html" title="InteractorSupport::Concerns (module)">Concerns</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="InteractorSupport/Concerns/Organizable.html" title="InteractorSupport::Concerns::Organizable (module)">Organizable</a></span></span>
 <span class='kw'>end</span>
 </code></pre>
+<hr>
+
+<h2 id="label-F0-9F-9B-A0+Configuration+Reference">🛠 Configuration Reference</h2>
+
+<p>All global settings for InteractorSupport can be set via the <code>InteractorSupport.configure</code> block. Here’s a full list of configuration options:</p>
+<!-- prettier-ignore-start -->
+<table role="table">
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>‘logger`</td>
+<td>‘Logger`</td>
+<td>‘Logger.new($stdout)`</td>
+<td>Logger instance used for internal logging.</td>
+</tr>
+<tr>
+<td>‘log_level`</td>
+<td>‘Integer` (Logger constant)</td>
+<td>‘Logger::INFO`</td>
+<td>Logging level (e.g., ‘Logger::DEBUG`, `Logger::WARN`, etc.).</td>
+</tr>
+<tr>
+<td>‘log_unknown_request_object_attributes`</td>
+<td>‘Boolean`</td>
+<td>‘true`</td>
+<td>Whether to log unknown request attributes that are ignored.</td>
+</tr>
+<tr>
+<td>‘request_object_behavior`</td>
+<td>‘Symbol`</td>
+<td>‘:returns_context`</td>
+<td>Controls what ‘RequestObject.new(…)` returns (`:returns_self` or `:returns_context`).</td>
+</tr>
+<tr>
+<td>‘request_object_key_type`</td>
+<td>‘Symbol`</td>
+<td>‘:symbol`</td>
+<td>Controls the output format of keys in ‘#to_context` (`:symbol`, `:string`, `:struct`).</td>
+</tr>
+<tr>
+<td>&lt;!– prettier-ignore-end –&gt;</td>
+</tr>
+</tbody>
+</table>
+
+<p>To update these settings, use:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="InteractorSupport.html" title="InteractorSupport (module)">InteractorSupport</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="InteractorSupport.html#configure-class_method" title="InteractorSupport.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span> <span class='op'>=</span> <span class='const'>Rails</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span>
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_log_level'>log_level</span> <span class='op'>=</span> <span class='const'>Logger</span><span class='op'>::</span><span class='const'>WARN</span>
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_log_unknown_request_object_attributes'>log_unknown_request_object_attributes</span> <span class='op'>=</span> <span class='kw'>true</span>
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_request_object_behavior'>request_object_behavior</span> <span class='op'>=</span> <span class='symbol'>:returns_self</span>
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_request_object_key_type'>request_object_key_type</span> <span class='op'>=</span> <span class='symbol'>:struct</span>
+<span class='kw'>end</span>
+</code></pre>
 
 <h2 id="label-F0-9F-A4-9D+Contributing">🤝 <strong>Contributing</strong></h2>
 
@@ -764,7 +851,7 @@ end
 </div></div>
 
       <div id="footer">
-  Generated on Sat Apr  5 19:55:06 2025 by
+  Generated on Tue Jul  1 04:25:39 2025 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.37 (ruby-3.2.2).
 </div>
