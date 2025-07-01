@@ -3,6 +3,7 @@
 require 'interactor'
 require 'logger'
 require 'active_support/concern'
+require 'interactor_support/errors'
 require_relative 'interactor_support/core'
 require_relative 'interactor_support/version'
 require_relative 'interactor_support/actions'

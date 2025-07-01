@@ -40,6 +40,7 @@ module InteractorSupport
     included do
       include ActiveModel::Model
       include ActiveModel::Attributes
+      include ActiveModel::AttributeAssignment
       include ActiveModel::Validations::Callbacks
 
       ##
@@ -88,6 +89,32 @@ module InteractorSupport
         attrs
       end
 
+      ##
+      # Assigns the given attributes to the request object.
+      #
+      # - Known attributes are assigned normally via their setters.
+      # - If `ignore_unknown_attributes?` is defined and true, unknown keys are ignored and logged.
+      # - Otherwise, raises `Errors::UnknownAttribute`.
+      #
+      # @param attrs [Hash] input attributes to assign
+      # @raise [Errors::UnknownAttribute] if unknown attribute is encountered and not ignored
+      # @return [void]
+      def assign_attributes(attrs)
+        attrs.each do |k, v|
+          setter = "#{k}="
+          if respond_to?(setter)
+            send(setter, v)
+          elsif respond_to?(:ignore_unknown_attributes?) && ignore_unknown_attributes?
+            InteractorSupport.configuration.logger.log(
+              InteractorSupport.configuration.log_level,
+              "InteractorSupport::RequestObject ignoring unknown attribute '#{k}' for #{self.class.name}.",
+            )
+          else
+            raise Errors::UnknownAttribute, "`#{k}` for #{self.class.name}."
+          end
+        end
+      end
+
       class << self
         ##
         # Custom constructor that optionally returns the context instead of the object itself.
@@ -101,6 +128,19 @@ module InteractorSupport
           return super(*args, **kwargs) if InteractorSupport.configuration.request_object_behavior == :returns_self
 
           super(*args, **kwargs).to_context
+        end
+
+        ##
+        # Defines whether to ignore unknown attributes during assignment.
+        # If true, unknown attributes are logged but not raised as errors.
+        # @example
+        #   class MyRequest
+        #     include InteractorSupport::RequestObject
+        #     ignore_unknown_attributes
+        #   end
+        #   @return [void]
+        def ignore_unknown_attributes
+          define_method(:ignore_unknown_attributes?) { true }
         end
 
         ##

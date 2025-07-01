@@ -30,12 +30,34 @@ module InteractorSupport
     attr_accessor :request_object_key_type
 
     ##
+    # Logger for InteractorSupport, defaults to STDOUT.
+    # @return [Logger]
+    attr_accessor :logger
+
+    ##
+    # The log level for InteractorSupport logs.
+    # @return [Integer]
+    attr_accessor :log_level
+
+    ##
+    # Whether to log unknown request object attributes when they are ignored.
+    # If true, logs a warning when an unknown attribute is encountered.
+    # @see InteractorSupport::RequestObject#ignore_unknown_attributes
+    attr_accessor :log_unknown_request_object_attributes
+
+    ##
     # Initializes the configuration with default values:
     # - `request_object_behavior` defaults to `:returns_context`
     # - `request_object_key_type` defaults to `:symbol`
+    # - `logger` defaults to a new Logger instance writing to STDOUT
+    # - `log_level` defaults to `Logger::INFO`
+    # - `log_unknown_request_object_attributes` defaults to `true`
     def initialize
       @request_object_behavior = :returns_context
       @request_object_key_type = :symbol
+      @logger = Logger.new($stdout)
+      @log_level = Logger::INFO
+      @log_unknown_request_object_attributes = true
     end
   end
 end

@@ -2,6 +2,7 @@ RSpec.describe(InteractorSupport::RequestObject) do
   before do
     InteractorSupport.configure do |config|
       config.request_object_behavior = :returns_self
+      config.log_level = Logger::INFO
     end
   end
 
@@ -207,6 +208,39 @@ RSpec.describe(InteractorSupport::RequestObject) do
 
       ctx = ImageUploadRequest.new(image: '  https://img.jpg  ').to_context
       expect(ctx[:image_url]).to(eq('https://img.jpg'))
+    end
+  end
+
+  describe 'attribute assignment' do
+    it 'raises error for unknown attributes' do
+      expect { GenreRequest.new(abc: 123) }.to(raise_error(InteractorSupport::Errors::UnknownAttribute))
+    end
+  end
+
+  describe '#ignore_unknown_attributes' do
+    it 'ignores unknown attributes when configured' do
+      req = CalendarRequest.new(
+        start_date: 5.days.from_now,
+        end_date: 5.days.from_now,
+        unknown: 'ignore me',
+      )
+      expect(req.respond_to?(:unknown)).to(be(false))
+      expect(req.start_date).to(be_a(Date))
+      expect(req.end_date).to(be_a(Date))
+    end
+
+    it 'logs a warning when an attribute is missing' do
+      expect(InteractorSupport.configuration.logger).to(
+        receive(:log).with(
+          InteractorSupport.configuration.log_level,
+          "InteractorSupport::RequestObject ignoring unknown attribute 'unknown' for CalendarRequest.",
+        ),
+      )
+      CalendarRequest.new(
+        start_date: 5.days.from_now,
+        end_date: 5.days.from_now,
+        unknown: 'ignore me',
+      )
     end
   end
 end

@@ -148,6 +148,7 @@ Instead of raw hashes, **Request Objects** provide **validation, transformation,
 - Works just like an **ActiveRecord model**
 - Supports **validations** out of the box
 - Automatically **transforms & sanitizes** data
+- Gracefully ignores unknown attributes if configured, with optional logging
 
 ```ruby
 class TodoRequest
@@ -160,6 +161,31 @@ class TodoRequest
   validates :title, presence: true
   validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
 end
+```
+
+### 🔍 Ignoring Unknown Attributes
+
+To prevent `RequestObject` from raising an error on unexpected keys, declare `ignore_unknown_attributes` in your class.
+
+```ruby
+class CalendarRequest
+  include InteractorSupport::RequestObject
+
+  ignore_unknown_attributes
+
+  attribute :start_date, type: :date
+  attribute :end_date, type: :date
+  attribute :timezone, transform: :strip
+
+  validates :start_date, :end_date, presence: true
+end
+```
+
+Now, if you initialize the request with an unexpected attribute, it will be logged (if logging is enabled) and ignored:
+
+```ruby
+CalendarRequest.new(start_date: "2025-07-01", end_date: "2025-07-02", foo: "bar")
+# => No exception raised; 'foo' is ignored.
 ```
 
 ---
@@ -649,6 +675,34 @@ Include in a controller or service base class
 ```rb
 class ApplicationController < ActionController::Base
   include InteractorSupport::Concerns::Organizable
+end
+```
+
+---
+
+## 🛠 Configuration Reference
+
+All global settings for InteractorSupport can be set via the `InteractorSupport.configure` block. Here's a full list of configuration options:
+
+<!-- prettier-ignore-start -->
+| Key | Type | Default | Description |
+| --- | ---- | ------- | -----------|
+| `logger` | `Logger` | `Logger.new($stdout)` | Logger instance used for internal logging. |
+| `log_level` | `Integer` (Logger constant) | `Logger::INFO` | Logging level (e.g., `Logger::DEBUG`, `Logger::WARN`, etc.). |
+| `log_unknown_request_object_attributes` | `Boolean` | `true` | Whether to log unknown request attributes that are ignored. |
+| `request_object_behavior` | `Symbol` | `:returns_context` | Controls what `RequestObject.new(...)` returns (`:returns_self` or `:returns_context`). |
+| `request_object_key_type` | `Symbol` | `:symbol` | Controls the output format of keys in `#to_context` (`:symbol`, `:string`, `:struct`).  |
+<!-- prettier-ignore-end -->
+
+To update these settings, use:
+
+```ruby
+InteractorSupport.configure do |config|
+  config.logger = Rails.logger
+  config.log_level = Logger::WARN
+  config.log_unknown_request_object_attributes = true
+  config.request_object_behavior = :returns_self
+  config.request_object_key_type = :struct
 end
 ```
 

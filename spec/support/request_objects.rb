@@ -79,3 +79,13 @@ class ImageUploadRequest
 
   attribute :image, rewrite: :image_url, transform: :strip
 end
+
+class CalendarRequest
+  include InteractorSupport::RequestObject
+  ignore_unknown_attributes
+  attribute :start_date, type: :date
+  attribute :end_date, type: :date
+  attribute :timezone, transform: :strip
+
+  validates :start_date, :end_date, presence: true
+end

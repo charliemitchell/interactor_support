@@ -21,3 +21,11 @@
 ## [1.0.4] - 2025-04-05
 
 - Added the organizable concern
+
+## [1.0.5] - 2025-06-30
+
+- Add support for ignoring unknown attributes in RequestObjects via `ignore_unknown_attributes` class method
+- Introduce `InteractorSupport.configuration.log_unknown_request_object_attributes` to optionally log ignored attributes
+- Introduce `InteractorSupport.configuration.logger` and `log_level` for customizable logging
+- Override `assign_attributes` to integrate attribute ignoring and error-raising behavior
+- Improve test coverage for unknown attribute handling and logging
