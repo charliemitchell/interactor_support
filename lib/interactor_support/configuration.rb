@@ -1,8 +1,8 @@
 module InteractorSupport
   ##
-  # Global configuration for InteractorSupport.
+  # Global configuration entry point for InteractorSupport.
   #
-  # This allows customization of how request objects behave when used in interactors.
+  # Use this to tailor request object behavior, logging, and context conversion.
   #
   # @example Set custom behavior
   #   InteractorSupport.configuration.request_object_behavior = :returns_self

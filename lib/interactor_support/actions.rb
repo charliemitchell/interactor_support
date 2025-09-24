@@ -1,11 +1,9 @@
 # lib/interactor_support/version.rb
 module InteractorSupport
   ##
-  # A bundle of DSL-style concerns that enhance interactors with expressive,
-  # composable behavior.
+  # Bundles the most common InteractorSupport concerns into a single include.
   #
-  # This module is intended to be included into an `Interactor` or `Organizer`,
-  # providing access to a suite of declarative action helpers:
+  # Mix this into an `Interactor` or `Interactor::Organizer` to gain access to:
   #
   # - {InteractorSupport::Concerns::Skippable} — Conditionally skip execution
   # - {InteractorSupport::Concerns::Transactionable} — Wrap logic in an ActiveRecord transaction

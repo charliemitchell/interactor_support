@@ -1,10 +1,9 @@
 module InteractorSupport
   ##
-  # Core behavior that ensures the `Interactor` module is included
-  # when any InteractorSupport concern is mixed in.
+  # Core hook that ensures the `Interactor` module is present when using InteractorSupport concerns.
   #
-  # This module is automatically included by all `InteractorSupport::Concerns`,
-  # so you generally do not need to include it manually.
+  # This module is automatically included by all `InteractorSupport::Concerns` so, in practice, you do
+  # not need to include it yourself.
   #
   # @example Included implicitly
   #   class MyInteractor

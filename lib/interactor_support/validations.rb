@@ -2,13 +2,13 @@ require 'active_model'
 
 module InteractorSupport
   ##
-  # Provides context-aware validation DSL for interactors.
+  # Provides a validation DSL tailored to interactor context.
   #
-  # This module adds `ActiveModel::Validations` and wraps it with methods like
-  # `required`, `optional`, `validates_before`, and `validates_after`, allowing
-  # declarative validation of interactor context values.
-  #
-  # Validations are executed automatically before (or after) the interactor runs.
+  # Including this module:
+  # - Adds `ActiveModel::Validations`
+  # - Introduces `required`, `optional`, `validates_before`, and `validates_after` helpers
+  # - Automatically maps validated attributes to `context` accessors
+  # - Halts execution with `context.fail!` when validations fail
   #
   # @example Required attributes with ActiveModel rules
   #   required :email, :name
@@ -37,8 +37,8 @@ module InteractorSupport
       ##
       # Declares one or more attributes as required.
       #
-      # Values must be present in the context. You can also pass validation options
-      # as a hash, which will be forwarded to ActiveModel's `validates`.
+      # Presence is enforced automatically, and any provided options are forwarded to
+      # `ActiveModel::Validations#validates`.
       #
       # @param keys [Array<Symbol, Hash>] attribute names or hash of attributes with validation options
       def required(*keys)
@@ -48,7 +48,7 @@ module InteractorSupport
       ##
       # Declares one or more attributes as optional.
       #
-      # Optional values can be nil, but still support validation rules.
+      # Optional values may be `nil` yet still participate in the provided validations.
       #
       # @param keys [Array<Symbol, Hash>] attribute names or hash of attributes with validation options
       def optional(*keys)
@@ -58,8 +58,7 @@ module InteractorSupport
       ##
       # Runs additional validations *after* the interactor executes.
       #
-      # Useful for checking persisted records, custom conditions, or results
-      # that depend on post-processing logic.
+      # Use this for checks that depend on side-effects inside `call` (e.g., persistence, background jobs).
       #
       # @param keys [Array<Symbol>] context keys to validate
       # @param validations [Hash] validation options (e.g., presence:, type:, inclusion:, persisted:)
@@ -74,9 +73,8 @@ module InteractorSupport
       ##
       # Runs validations *before* the interactor executes.
       #
-      # Prevents invalid data from reaching business logic.
-      #
-      # NOTE: `persisted:` validation is only available in `validates_after`.
+      # Use this to guard business logic from invalid input. The `persisted:` check is only available in
+      # {#validates_after} because it depends on side-effects.
       #
       # @param keys [Array<Symbol>] context keys to validate
       # @param validations [Hash] validation options (e.g., presence:, type:, inclusion:)
@@ -95,7 +93,7 @@ module InteractorSupport
       private
 
       ##
-      # Applies ActiveModel-based validations and wires up accessors to context.
+      # Applies ActiveModel validations and wires up reader/writer methods to the context.
       #
       # @param keys [Array<Symbol, Hash>] attributes to validate
       # @param required [Boolean] whether presence is enforced

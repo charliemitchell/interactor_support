@@ -1,4 +1,6 @@
 module InteractorSupport
+  ##
+  # Custom error types surfaced by InteractorSupport helpers.
   module Errors
     class UnknownAttribute < StandardError
       attr_reader :attribute, :owner

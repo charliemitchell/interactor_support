@@ -1,13 +1,11 @@
 module InteractorSupport
   module Concerns
     ##
-    # Adds transactional support to your interactor using ActiveRecord.
+    # Adds a declarative `transaction` wrapper around interactor execution using ActiveRecord.
     #
-    # The `transaction` method wraps the interactor execution in an `around` block
-    # that uses `ActiveRecord::Base.transaction`. If the context fails (via `context.fail!`),
-    # the transaction is rolled back automatically using `ActiveRecord::Rollback`.
-    #
-    # This is useful for ensuring your interactor behaves atomically.
+    # Enabling the wrapper ensures that:
+    # - The interactor runs inside `ActiveRecord::Base.transaction` with configurable options.
+    # - `context.fail!` triggers an `ActiveRecord::Rollback` so partial work is undone.
     #
     # @example Basic usage
     #   class CreateUser
@@ -31,12 +29,12 @@ module InteractorSupport
         class << self
           # Wraps the interactor in a database transaction.
           #
-          # If the context fails (`context.failure?`), a rollback is triggered automatically.
-          # You can customize the transaction behavior using standard ActiveRecord options.
+          # If the context fails (`context.failure?`), a rollback is triggered automatically. Supports
+          # the same keyword options as `ActiveRecord::Base.transaction`.
           #
-          # @param isolation [Symbol, nil] the transaction isolation level (e.g., `:read_committed`, `:serializable`)
+          # @param isolation [Symbol, nil] optional transaction isolation level (e.g., `:read_committed`)
           # @param joinable [Boolean] whether this transaction can join an existing one
-          # @param requires_new [Boolean] whether to force a new transaction, even if one already exists
+          # @param requires_new [Boolean] whether to force a new transaction even if one already exists
           #
           # @example Wrap in a basic transaction
           #   transaction

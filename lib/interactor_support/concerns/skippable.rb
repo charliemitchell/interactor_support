@@ -3,14 +3,13 @@
 module InteractorSupport
   module Concerns
     ##
-    # Adds a DSL method to conditionally skip an interactor.
+    # Adds a declarative `skip` helper for short-circuiting interactor execution.
     #
-    # This concern provides a `skip` method that wraps the interactor in an `around` block.
-    # You can pass an `:if` or `:unless` condition using a Proc, Symbol, or literal.
-    # The condition will be evaluated at runtime to determine whether to run the interactor.
+    # Conditions run inside an `around` callback, accepting symbols, booleans, or lambdas executed via
+    # `instance_exec`. Use this to prevent unnecessary work when preconditions fail.
     #
-    # - Symbols will be looked up on the interactor or in the context.
-    # - Lambdas/Procs are evaluated using `instance_exec` with full access to context.
+    # - Symbols first look for an interactor instance method, then fall back to context values.
+    # - Lambdas have full access to the interactor instance and context.
     #
     # @example Skip if the user is already authenticated (symbol in context)
     #   skip if: :user_authenticated
@@ -31,10 +30,7 @@ module InteractorSupport
           ##
           # Skips the interactor based on a condition provided via `:if` or `:unless`.
           #
-          # This wraps the interactor in an `around` hook, and conditionally skips
-          # execution based on truthy/falsy evaluation of the provided options.
-          #
-          # The condition can be a Proc (evaluated in context), a Symbol (used to call a method or context key), or a literal value.
+          # A truthy `:if` or falsy `:unless` prevents `call` from running; otherwise execution continues.
           #
           # @param options [Hash]
           # @option options [Proc, Symbol, Boolean] :if a condition that must be truthy to skip

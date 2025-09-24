@@ -1,12 +1,12 @@
 module InteractorSupport
   module Concerns
     ##
-    # Adds dynamic model-finding helpers (`find_by`, `find_where`) to an interactor.
+    # DSL helpers for loading records into context before an interactor runs.
     #
-    # This concern wraps ActiveRecord `.find_by` and `.where` queries into
-    # declarative DSL methods that load records into the interactor context.
+    # - `find_by` loads a single record via `.find_by`, using context values or lambdas for conditions.
+    # - `find_where` loads collections via `.where`, `.where.not`, and optional scopes.
     #
-    # These methods support symbols (for context keys) and lambdas (for dynamic runtime evaluation).
+    # Use `required: true` to fail the context automatically when nothing is found.
     #
     # @example Find a post by ID from the context
     #   find_by :post
@@ -27,10 +27,10 @@ module InteractorSupport
 
       included do
         class << self
-          # Adds a `before` callback to find a single record and assign it to context.
+          # Adds a `before` callback to find a single record and assign it to the context.
           #
-          # This method searches for a record based on the provided query parameters.
-          # It supports dynamic values using symbols (context keys) and lambdas (for runtime evaluation).
+          # Symbols pull values from the context, lambdas run via `instance_exec`, and literal values are
+          # passed directly to `find_by`. When `query` is omitted, the DSL defaults to `<model>_id`.
           #
           # @param model [Symbol, String] the name of the model to query (e.g., `:post`)
           # @param query [Hash{Symbol=>Object,Proc}] a hash of attributes to match (can use symbols for context lookup or lambdas)
@@ -69,10 +69,10 @@ module InteractorSupport
             end
           end
 
-          # Adds a `before` callback to find multiple records and assign them to context.
+          # Adds a `before` callback to find multiple records (or relations) and assign them to context.
           #
-          # This method performs a `.where` query with optional `.where.not` and `.scope`,
-          # allowing dynamic values using symbols (for context lookup) and lambdas (for runtime evaluation).
+          # Supports `.where`, `.where.not`, and optional scopes. Symbols pull from context, lambdas run via
+          # `instance_exec`, enabling flexible query composition.
           #
           # @param model [Symbol, String] the name of the model to query (e.g., `:post`)
           # @param where [Hash{Symbol=>Object,Proc}] conditions for `.where` (can use symbols or lambdas)

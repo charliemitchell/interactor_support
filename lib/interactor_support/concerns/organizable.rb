@@ -3,40 +3,44 @@
 module InteractorSupport
   module Concerns
     ##
-    # The `Organizable` module provides utility methods for organizing interactors
-    # and shaping request parameters in a structured way.
+    # Utilities for invoking interactors with request objects and shaping incoming params.
     #
-    # It is intended to be included into a controller or a base service class that
-    # delegates to interactors using request objects.
+    # Include this concern in controllers or service entry points to:
+    # - Whitelist and transform request parameters in a single place
+    # - Build request objects and pass them to interactors with one call
+    # - Receive consistent `InvalidRequestObject` errors when validation fails
     #
     # @example Include in a controller
     #   class ApplicationController < ActionController::Base
     #     include InteractorSupport::Organizable
     #   end
     #
-    # @see InteractorSupport::Organizable#organize
-    # @see InteractorSupport::Organizable#request_params
+    # @see InteractorSupport::Concerns::Organizable#organize
+    # @see InteractorSupport::Concerns::Organizable#request_params
     module Organizable
       include ActiveSupport::Concern
 
-      # Calls the given interactor with a request object.
-      # Optionally wraps the request object under a key in the interactor context.
+      # Calls the given interactor with a request object derived from `params`.
       #
-      # @param interactor [Class] The interactor class to call.
-      # @param params [Hash] Parameters to initialize the request object.
-      # @param request_object [Class] A request object class that responds to `#new(params)`.
+      # - If `context_key` is provided, the request is namespaced under that key when invoking `call`.
+      # - Validation failures raise {InteractorSupport::Errors::InvalidRequestObject}, allowing the caller
+      #   to rescue and render validation messages without inspecting ActiveModel internals.
+      #
+      # @param interactor [Class] The interactor class or organizer to call.
+      # @param params [Hash] Raw parameters to initialize the request object.
+      # @param request_object [Class] A request object class that responds to `.new`.
       # @param context_key [Symbol, nil] Optional key to assign the request object under in the context.
       #
-      # @return [void]
+      # @return [Interactor::Context]
       #
-      # @example
-      #  organize(MyInteractor, params: request_params, request_object: MyRequest)
-      #  # => Calls MyInteractor with an instance of MyRequest initialized with request_params.
+      # @example Basic call
+      #   organize(Users::Create, params: request_params(:user), request_object: CreateUserRequest)
       #
-      # @example
-      #   organize(MyInteractor, params: request_params, request_object: MyRequest, context_key: :request)
-      #   # => Calls MyInteractor with an instance of MyRequest initialized with request_params at :context_key.
-      #   #   # => The context will contain { request: MyRequest.new(request_params) }
+      # @example Namespace the request in context
+      #   organize(Users::Create,
+      #            params: request_params(:user),
+      #            request_object: CreateUserRequest,
+      #            context_key: :request)
       def organize(interactor, params:, request_object:, context_key: nil)
         request_payload = request_object.new(params)
 
@@ -57,17 +61,18 @@ module InteractorSupport
         )
       end
 
-      # Builds a structured and optionally transformed parameter hash from Rails' `params`.
+      # Builds a structured parameter hash from Rails' `params`, with helpers for rewriting keys.
       #
-      # This method supports extracting specific top-level keys, applying optional rewrite
-      # transformations, merging in additional values, and excluding unwanted keys.
+      # Use this as the single entry point for shaping incoming parameters before they are given to
+      # request objects. It combines extraction, filtering, renaming, flattening, defaults, and merges
+      # in a single call.
       #
       # @param top_level_keys [Array<Symbol>] Top-level keys to extract from `params`. If empty, all keys are included.
       # @param merge [Hash] Additional values to merge into the final result.
       # @param except [Array<Symbol, Array<Symbol>>] Keys or nested key paths to exclude from the result.
       # @param rewrite [Array<Hash>] A set of transformation rules applied to the top-level keys.
       #
-      # @return [Hash] The final, shaped parameters hash.
+      # @return [Hash] The shaped parameters hash ready for request object initialization.
       #
       # @example Extracting a specific top-level key
       #   # Given: params = { order: { product_id: 1, quantity: 2 } }

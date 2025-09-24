@@ -1,10 +1,16 @@
 module InteractorSupport
   ##
-  # A base module for building validated, transformable, and optionally nested request objects.
+  # Provides a concise DSL for building validated, transformable, and nested request objects.
   #
-  # It builds on top of `ActiveModel::Model`, adds coercion, default values, attribute transforms,
-  # key rewriting, and automatic context conversion (via `#to_context`). It integrates tightly with
-  # `InteractorSupport::Configuration` to control return behavior and key formatting.
+  # Including this module gives you:
+  # - ActiveModel validations and callbacks
+  # - Attribute coercion (via ActiveModel types or custom classes/request objects)
+  # - Value transforms, defaults, and key rewriting
+  # - A `#to_context` helper that converts the object into hashes or structs for interactors
+  # - Predictable error handling (unknown attributes raise {Errors::UnknownAttribute},
+  #   invalid records raise {ActiveModel::ValidationError})
+  #
+  # Configure return semantics (hash vs. struct vs. self) through {InteractorSupport::Configuration}.
   #
   # @example Basic usage
   #   class CreateUserRequest
@@ -13,16 +19,19 @@ module InteractorSupport
   #     attribute :name, transform: [:strip, :downcase]
   #     attribute :email
   #     attribute :metadata, default: {}
+  #
+  #     validates :email, presence: true
   #   end
   #
   #   CreateUserRequest.new(name: " JOHN ", email: "hi@example.com")
   #   # => { name: "john", email: "hi@example.com", metadata: {} }
   #
-  # @example Key rewriting
+  # @example Key rewriting and nested objects
   #   class UploadRequest
   #     include InteractorSupport::RequestObject
   #
   #     attribute :image, rewrite: :image_url
+  #     attribute :metadata, type: ImageMetadataRequest
   #   end
   #
   #   UploadRequest.new(image: "url").image_url # => "url"
@@ -44,9 +53,11 @@ module InteractorSupport
       include ActiveModel::Validations::Callbacks
 
       ##
-      # Initializes the request object and raises if invalid.
+      # Initializes the request object, applying key rewrites and validations.
       #
-      # Rewritten keys are converted before passing to ActiveModel.
+      # Unknown keys trigger {Errors::UnknownAttribute} (unless `ignore_unknown_attributes` is enabled).
+      # Validation failures raise `ActiveModel::ValidationError`, which is wrapped by
+      # {InteractorSupport::Concerns::Organizable#organize organize} when used through organizers.
       #
       # @param attributes [Hash] the input attributes
       # @raise [ActiveModel::ValidationError] if the object is invalid
@@ -63,12 +74,12 @@ module InteractorSupport
       end
 
       ##
-      # Converts the request object into a format suitable for interactor context.
+      # Converts the request object into the structure expected by interactors.
       #
-      # - If `key_type` is `:symbol` or `:string`, returns a Hash.
-      # - If `key_type` is `:struct`, returns a Struct instance.
+      # - If `request_object_key_type` is `:symbol` or `:string`, returns a Hash keyed accordingly.
+      # - If `request_object_key_type` is `:struct`, returns a Struct with attribute readers.
       #
-      # Nested request objects will also be converted recursively.
+      # Nested request objects (including arrays of request objects) are converted recursively.
       #
       # @return [Hash, Struct]
       def to_context
@@ -90,14 +101,14 @@ module InteractorSupport
       end
 
       ##
-      # Assigns the given attributes to the request object.
+      # Assigns external attributes, respecting rewrite rules and the unknown-attribute policy.
       #
-      # - Known attributes are assigned normally via their setters.
-      # - If `ignore_unknown_attributes?` is defined and true, unknown keys are ignored and logged.
-      # - Otherwise, raises `Errors::UnknownAttribute`.
+      # - Known attributes are routed through generated setters so transforms and type coercion run.
+      # - If `ignore_unknown_attributes` was declared, unrecognized keys are ignored (and optionally logged).
+      # - Otherwise {Errors::UnknownAttribute} is raised with the offending key and request class.
       #
       # @param attrs [Hash] input attributes to assign
-      # @raise [Errors::UnknownAttribute] if unknown attribute is encountered and not ignored
+      # @raise [Errors::UnknownAttribute] if an unknown attribute is encountered and not ignored
       # @return [void]
       def assign_attributes(attrs)
         attrs.each do |k, v|
@@ -119,9 +130,11 @@ module InteractorSupport
 
       class << self
         ##
-        # Custom constructor that optionally returns the context instead of the object itself.
+        # Custom constructor with pluggable return behavior.
         #
-        # Behavior is configured via `InteractorSupport.configuration.request_object_behavior`.
+        # Controlled by `InteractorSupport.configuration.request_object_behavior`:
+        # - `:returns_self` returns the request object instance (good for explicit `#valid?` checks).
+        # - `:returns_context` (default) immediately calls {#to_context} for interactor-style hashes/structs.
         #
         # @param args [Array] positional args
         # @param kwargs [Hash] keyword args
@@ -133,8 +146,10 @@ module InteractorSupport
         end
 
         ##
-        # Defines whether to ignore unknown attributes during assignment.
-        # If true, unknown attributes are logged but not raised as errors.
+        # Declares that unknown attributes should be ignored instead of raising.
+        #
+        # Ignored keys can still be logged (controlled via
+        # `InteractorSupport.configuration.log_unknown_request_object_attributes`).
         # @example
         #   class MyRequest
         #     include InteractorSupport::RequestObject
@@ -146,17 +161,16 @@ module InteractorSupport
         end
 
         ##
-        # Defines one or more attributes with optional coercion, default values, transformation,
-        # and an optional `rewrite:` key to rename the underlying attribute.
+        # Declares one or more attributes with optional coercion, defaults, transforms, and key rewrites.
         #
-        # @param names [Array<Symbol>] the attribute names
-        # @param type [Class, nil] optional class to coerce the value to (often another request object)
-        # @param array [Boolean] whether to treat the input as an array of typed objects
-        # @param default [Object] default value if not provided
-        # @param transform [Symbol, Array<Symbol>] method(s) to apply to the value
-        # @param rewrite [Symbol, nil] optional internal name to rewrite this attribute to
+        # @param names [Array<Symbol>] the attribute names declared on the public API
+        # @param type [Class, Symbol, nil] optional coercion target (ActiveModel symbol or another request object)
+        # @param array [Boolean] treat input as an array of typed objects and coerce each element
+        # @param default [Object] default value if not provided by the caller
+        # @param transform [Symbol, Array<Symbol>, Proc] one or more transformations applied before coercion
+        # @param rewrite [Symbol, nil] internal name to assign stored value to (useful for renaming keys)
         #
-        # @raise [ArgumentError] if a transform method is not found
+        # @raise [ArgumentError] if a transform method cannot be resolved
         def attribute(*names, type: nil, array: false, default: nil, transform: nil, rewrite: nil)
           names.each do |name|
             attr_name = rewrite || name
@@ -179,7 +193,7 @@ module InteractorSupport
                 end
               end
 
-              # If a `type` is specified, we attempt to cast the `value` to that type
+              # If a `type` is specified, cast the value to the configured type before assignment.
               if type
                 value = array ? Array(value).map { |v| cast_value(v, type) } : cast_value(value, type)
               end

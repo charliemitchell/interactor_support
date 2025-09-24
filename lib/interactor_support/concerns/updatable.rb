@@ -1,13 +1,16 @@
 module InteractorSupport
   module Concerns
     ##
-    # Adds an `update` DSL method for updating a context-loaded model with attributes.
+    # Adds an `update` DSL for synchronizing context data back into ActiveRecord models.
     #
-    # This concern allows flexible updates using data from the interactor's context.
-    # It supports direct mapping from context keys, nested attribute extraction from parent objects,
-    # lambdas for dynamic evaluation, or passing a symbol pointing to an entire context object.
+    # The DSL supports:
+    # - Direct mappings from context keys to model attributes
+    # - Plucking nested values from other context objects (hashes or structs)
+    # - Lambdas for dynamic evaluation, executed in the interactor context
+    # - Passing a symbol that points to a hash of attributes in the context (mass assignment)
     #
-    # This is useful for updating records cleanly and consistently in declarative steps.
+    # Each update runs before `#call` and uses `record.update!`, so failures raise immediately unless
+    # rescued by the interactor.
     #
     # @example Update a user using context values
     #   update :user, attributes: { name: :new_name, email: :new_email }
@@ -27,15 +30,18 @@ module InteractorSupport
         class << self
           # Updates a model using values from the context before the interactor runs.
           #
-          # Supports flexible ways of specifying attributes:
-          # - A hash mapping attribute names to context keys, nested keys, or lambdas
-          # - A symbol pointing to a hash in context
+          # - When `attributes` is a Hash, keys are written to the record. Values can be:
+          #   * Symbols (looked up on the context)
+          #   * Arrays (pluck multiple keys from another context object)
+          #   * Hashes (extract values from a parent context object)
+          #   * Procs (executed with `instance_exec` for custom logic)
+          # - When `attributes` is a Symbol, the corresponding context hash is used directly.
           #
-          # If the record or required data is missing, the context fails with an error.
+          # Missing data triggers `context.fail!` with a helpful message so the update halts cleanly.
           #
-          # @param model [Symbol] the key in the context holding the record to update
-          # @param attributes [Hash, Symbol] a hash mapping attributes to context keys/lambdas, or a symbol pointing to a context hash
-          # @param context_key [Symbol, nil] key to assign the updated record to in context (defaults to `model`)
+          # @param model [Symbol] context key for the record to update
+          # @param attributes [Hash, Symbol] mapping of target attributes or context hash to copy from
+          # @param context_key [Symbol, nil] context key to store the updated record (defaults to `model`)
           #
           # @example Basic attribute update using context keys
           #   update :user, attributes: { name: :new_name, email: :new_email }

@@ -1,10 +1,10 @@
 module InteractorSupport
   module Concerns
     ##
-    # Adds helpers for assigning and transforming values in interactor context.
+    # Adds helpers for preparing context data before the interactor `call` executes.
     #
-    # The `context_variable` method sets static or dynamic values before the interactor runs.
-    # The `transform` method allows chaining transformations (methods or lambdas) on context values.
+    # - `context_variable` seeds the context with static values or lazily evaluated lambdas.
+    # - `transform` normalizes existing context values using symbols, lambdas, or chains of both.
     #
     # @example Assign context variables before the interactor runs
     #   context_variable user: -> { User.find(user_id) }, numbers: [1, 2, 3]
@@ -27,10 +27,10 @@ module InteractorSupport
         class << self
           # Assigns one or more values to the context before the interactor runs.
           #
-          # Values can be static or lazily evaluated with a lambda/proc using `instance_exec`,
-          # which provides access to the context and interactor instance.
+          # Values can be static or lazily evaluated with a proc using `instance_exec`, which has
+          # access to the interactor instance and context.
           #
-          # @param key_values [Hash{Symbol => Object, Proc}] a mapping of context keys to values or Procs
+          # @param key_values [Hash{Symbol => Object, Proc}] mapping of context keys to values or Procs
           #
           # @example Static and dynamic values
           #   context_variable first_post: Post.first
@@ -48,15 +48,17 @@ module InteractorSupport
             end
           end
 
-          # Transforms one or more context values using a method, a proc, or a sequence of methods.
+          # Transforms one or more context values using symbols, procs, or chains of both.
           #
-          # This allows simple transformations like `:strip` or `:downcase`, or more complex lambdas.
-          # You can also chain transformations by passing an array of method names.
+          # - Symbols call the method on the current value (e.g., `:strip`).
+          # - Procs run via `instance_exec`, so they can reach other context values.
+          # - Arrays allow combining multiple operations in order.
           #
-          # If a transformation fails, the context fails with an error message.
+          # Any transformation failure uses `context.fail!` with a helpful error message so the
+          # interactor halts gracefully.
           #
           # @param keys [Array<Symbol>] one or more context keys to transform
-          # @param with [Symbol, Array<Symbol>, Proc] a single method name, an array of method names, or a proc
+          # @param with [Symbol, Array<Symbol, Proc>, Proc] method name(s) or a proc used to transform values
           #
           # @raise [ArgumentError] if no keys are given, or if an invalid `with:` value is passed
           #
