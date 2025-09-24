@@ -105,12 +105,14 @@ module InteractorSupport
           if respond_to?(setter)
             send(setter, v)
           elsif respond_to?(:ignore_unknown_attributes?) && ignore_unknown_attributes?
-            InteractorSupport.configuration.logger.log(
-              InteractorSupport.configuration.log_level,
-              "InteractorSupport::RequestObject ignoring unknown attribute '#{k}' for #{self.class.name}.",
-            )
+            if InteractorSupport.configuration.log_unknown_request_object_attributes
+              InteractorSupport.configuration.logger.log(
+                InteractorSupport.configuration.log_level,
+                "InteractorSupport::RequestObject ignoring unknown attribute '#{k}' for #{self.class.name}.",
+              )
+            end
           else
-            raise Errors::UnknownAttribute, "`#{k}` for #{self.class.name}."
+            raise Errors::UnknownAttribute.new(k, owner: self.class)
           end
         end
       end
@@ -232,7 +234,13 @@ module InteractorSupport
         message = ":#{type} is not a supported type. Supported types are: #{SUPPORTED_TYPES.join(", ")}"
         raise TypeError, message
       rescue
-        raise TypeError, "Cannot cast #{value.inspect} to #{type.name}"
+        type_name =
+          if type.respond_to?(:name) && type.name
+            type.name
+          else
+            type.to_s
+          end
+        raise TypeError, "Cannot cast #{value.inspect} to #{type_name}"
       end
     end
   end

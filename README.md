@@ -559,7 +559,7 @@ The Organizable concern provides utility methods to simplify working with intera
 
 Features
 
-- organize: Call interactors with request objects, optionally namespaced under a context_key.
+- organize: Call interactors with request objects, optionally namespaced under a context_key, and wrap validation failures in a consistent error.
 - request_params: Extract, shape, filter, rename, flatten, and merge incoming params in a clear and declarative way.
 - Built for controllers or service entry points.
 - Rails-native feel — works seamlessly with strong params.
@@ -586,6 +586,18 @@ organize(MyInteractor, params: request_params, request_object: MyRequest)
 organize(MyInteractor, params: request_params, request_object: MyRequest, context_key: :request)
 
 # => MyInteractor.call({ request: MyRequest.new(params) })
+```
+
+Validation failures inside the request object raise `InteractorSupport::Errors::InvalidRequestObject`. The exception exposes the request class and its validation messages, making it straightforward to surface errors back to the caller.
+
+```rb
+def create
+  organize(CreateUserInteractor, params: request_params(:user), request_object: CreateUserRequest)
+  redirect_to dashboard_path
+rescue InteractorSupport::Errors::InvalidRequestObject => e
+  flash.now[:alert] = "Unable to continue: #{e.errors.to_sentence}"
+  render :new, status: :unprocessable_entity
+end
 ```
 
 #### #request_params(\*top_level_keys, merge: {}, except: [], rewrite: [])

@@ -29,3 +29,9 @@
 - Introduce `InteractorSupport.configuration.logger` and `log_level` for customizable logging
 - Override `assign_attributes` to integrate attribute ignoring and error-raising behavior
 - Improve test coverage for unknown attribute handling and logging
+
+## [1.0.6] - 2025-09-24
+
+- Wrap request object validation failures from `Organizable#organize` in `InteractorSupport::Errors::InvalidRequestObject` for consistent controller handling
+- Honor `configuration.log_unknown_request_object_attributes` when logging ignored request object keys
+- Improve request object error messaging for failed casts and unknown attributes

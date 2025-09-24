@@ -8,6 +8,14 @@ class DummyRequestObject
   attribute :ip, :foo, :debug
 end
 
+class InvalidDummyRequestObject
+  include InteractorSupport::RequestObject
+
+  attribute :name
+
+  validates :name, presence: true
+end
+
 class DummyInteractor
   include Interactor
 
@@ -127,6 +135,19 @@ RSpec.describe(InteractorSupport::Concerns::Organizable) do
       expect(result).to(be_a(Interactor::Context))
       expect(result.message).to(eq('Hello, world!'))
       expect(result.custom[:flags]).to(eq('yes'))
+    end
+
+    it 'raises a wrapped error when the request object is invalid' do
+      expect do
+        instance.organize(
+          DummyInteractor,
+          params: {},
+          request_object: InvalidDummyRequestObject,
+        )
+      end.to(raise_error(InteractorSupport::Errors::InvalidRequestObject) do |error|
+        expect(error.request_class).to(eq(InvalidDummyRequestObject))
+        expect(error.errors).to(include("Name can't be blank"))
+      end)
     end
   end
 end

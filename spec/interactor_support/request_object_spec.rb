@@ -91,6 +91,20 @@ RSpec.describe(InteractorSupport::RequestObject) do
       end
     end
 
+    context 'when ActiveModel casting raises unexpected errors' do
+      it 'wraps the failure in a TypeError with a descriptive message' do
+        allow(ActiveModel::Type).to(receive(:lookup).and_wrap_original do |method, *args|
+          raise StandardError, 'boom' if args.first == :integer
+
+          method.call(*args)
+        end)
+
+        expect do
+          TypeRequest.new(some_integer: '10')
+        end.to(raise_error(InteractorSupport::RequestObject::TypeError, /Cannot cast .* to integer/))
+      end
+    end
+
     context 'with custom class type' do
       it 'accepts instances and rejects classes' do
         expect(TypeRequest.new(some_class: AnyClass.new).some_class).to(be_a(AnyClass))
@@ -241,6 +255,24 @@ RSpec.describe(InteractorSupport::RequestObject) do
         end_date: 5.days.from_now,
         unknown: 'ignore me',
       )
+    end
+
+    it 'skips logging when configuration disables it' do
+      InteractorSupport.configure do |config|
+        config.log_unknown_request_object_attributes = false
+      end
+
+      expect(InteractorSupport.configuration.logger).not_to(receive(:log))
+
+      CalendarRequest.new(
+        start_date: 5.days.from_now,
+        end_date: 5.days.from_now,
+        unknown: 'ignore me',
+      )
+    ensure
+      InteractorSupport.configure do |config|
+        config.log_unknown_request_object_attributes = true
+      end
     end
   end
 end

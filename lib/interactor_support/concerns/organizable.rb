@@ -38,8 +38,22 @@ module InteractorSupport
       #   # => Calls MyInteractor with an instance of MyRequest initialized with request_params at :context_key.
       #   #   # => The context will contain { request: MyRequest.new(request_params) }
       def organize(interactor, params:, request_object:, context_key: nil)
+        request_payload = request_object.new(params)
+
         @context = interactor.call(
-          context_key ? { context_key => request_object.new(params) } : request_object.new(params),
+          context_key ? { context_key => request_payload } : request_payload,
+        )
+      rescue ActiveModel::ValidationError => e
+        errors =
+          if e.model&.respond_to?(:errors)
+            e.model.errors.full_messages
+          else
+            []
+          end
+
+        raise InteractorSupport::Errors::InvalidRequestObject.new(
+          request_class: request_object,
+          errors: errors,
         )
       end
 
