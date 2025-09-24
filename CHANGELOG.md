@@ -1,5 +1,18 @@
 ## [Unreleased]
 
+## [1.0.7] - 2025-09-24
+
+- Add `handle_interactor_failure` DSL and per-call overrides for centralized interactor failure handling
+- Raise an internal failure signal so handled responses automatically halt controller actions (with opt-out via `halt_on_handle: false`)
+- Provide `InteractorSupport.configuration.default_interactor_error_handler` for global handler registration
+- Expose richer failure payloads (context, error, request object, params) to handlers
+
+## [1.0.6] - 2025-09-24
+
+- Wrap request object validation failures from `Organizable#organize` in `InteractorSupport::Errors::InvalidRequestObject` for consistent controller handling
+- Honor `configuration.log_unknown_request_object_attributes` when logging ignored request object keys
+- Improve request object error messaging for failed casts and unknown attributes
+
 ## [1.0.0] - 2025-03-20
 
 - Initial release
@@ -29,9 +42,3 @@
 - Introduce `InteractorSupport.configuration.logger` and `log_level` for customizable logging
 - Override `assign_attributes` to integrate attribute ignoring and error-raising behavior
 - Improve test coverage for unknown attribute handling and logging
-
-## [1.0.6] - 2025-09-24
-
-- Wrap request object validation failures from `Organizable#organize` in `InteractorSupport::Errors::InvalidRequestObject` for consistent controller handling
-- Honor `configuration.log_unknown_request_object_attributes` when logging ignored request object keys
-- Improve request object error messaging for failed casts and unknown attributes

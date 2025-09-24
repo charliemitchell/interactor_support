@@ -575,6 +575,8 @@ Calls the given interactor with a request object built from the provided params.
 | params         | Hash          | Parameters passed to the request object.                                    |
 | request_object | Class         | A request object class that accepts params in its initializer.              |
 | context_key    | Symbol or nil | Optional key to namespace the request object inside the interactor context. |
+| error_handler  | Symbol, Proc, Array, `false`, `nil` | Override the failure handlers for this call. Use `false` to skip handlers or include `:defaults` to inject registered ones. |
+| halt_on_handle | Boolean | Whether to halt the caller when a handler marks the failure handled (defaults to `true`). |
 
 Examples
 
@@ -588,17 +590,42 @@ organize(MyInteractor, params: request_params, request_object: MyRequest, contex
 # => MyInteractor.call({ request: MyRequest.new(params) })
 ```
 
-Validation failures inside the request object raise `InteractorSupport::Errors::InvalidRequestObject`. The exception exposes the request class and its validation messages, making it straightforward to surface errors back to the caller.
+If you opt out of failure handlers, validation errors still bubble as `InteractorSupport::Errors::InvalidRequestObject`. Registering a handler with `handle_interactor_failure` lets you centralise the response instead:
 
 ```rb
-def create
-  organize(CreateUserInteractor, params: request_params(:user), request_object: CreateUserRequest)
-  redirect_to dashboard_path
-rescue InteractorSupport::Errors::InvalidRequestObject => e
-  flash.now[:alert] = "Unable to continue: #{e.errors.to_sentence}"
-  render :new, status: :unprocessable_entity
+class UsersController < ApplicationController
+  include InteractorSupport::Concerns::Organizable
+
+  handle_interactor_failure :render_failure
+
+  def create
+    organize(CreateUserInteractor,
+             params: request_params(:user),
+             request_object: CreateUserRequest)
+
+    render json: @context.user, status: :created
+  end
+
+  private
+
+  def render_failure(failure)
+    flash.now[:alert] = failure.errors.to_sentence
+    render :new, status: :unprocessable_entity
+    failure.handled!
+  end
 end
 ```
+
+When the handler calls `failure.handled!` (or returns truthy), the concern raises an internal signal that is swallowed by Rails’ `rescue_from`, halting the action before the success response runs. Pass `halt_on_handle: false` to `organize` for cases where you still want the action to continue.
+
+You can override handlers per call with the `error_handler:` option. Symbols/Procs are accepted, and the special token `:defaults` injects any class-level or globally configured handlers.
+
+##### Failure handler options
+
+- `handle_interactor_failure :method, only: [:create], except: [:destroy]` — scope handlers to particular actions.
+- `organize(..., error_handler: false)` — skip all registered handlers for a single call.
+- `organize(..., error_handler: [:audit_failure, :defaults])` — prepend custom handlers while still running the defaults.
+- `organize(..., halt_on_handle: false)` — allow logic after `organize` to run even if a handler reported the failure handled.
 
 #### #request_params(\*top_level_keys, merge: {}, except: [], rewrite: [])
 
@@ -704,6 +731,7 @@ All global settings for InteractorSupport can be set via the `InteractorSupport.
 | `log_unknown_request_object_attributes` | `Boolean` | `true` | Whether to log unknown request attributes that are ignored. |
 | `request_object_behavior` | `Symbol` | `:returns_context` | Controls what `RequestObject.new(...)` returns (`:returns_self` or `:returns_context`). |
 | `request_object_key_type` | `Symbol` | `:symbol` | Controls the output format of keys in `#to_context` (`:symbol`, `:string`, `:struct`).  |
+| `default_interactor_error_handler` | `Symbol`, `Proc`, `Array` | `nil` | Global failure handler(s) invoked when `handle_interactor_failure` is not used or when `:defaults` is requested. |
 <!-- prettier-ignore-end -->
 
 To update these settings, use:
@@ -715,6 +743,7 @@ InteractorSupport.configure do |config|
   config.log_unknown_request_object_attributes = true
   config.request_object_behavior = :returns_self
   config.request_object_key_type = :struct
+  config.default_interactor_error_handler = :render_global_failure
 end
 ```
 

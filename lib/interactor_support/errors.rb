@@ -49,7 +49,7 @@ module InteractorSupport
             request_class.to_s
           end
 
-        detail = @errors.any? ? ": #{@errors.join(', ')}" : ''
+        detail = @errors.any? ? ": #{@errors.join(", ")}" : ''
 
         super("Invalid #{request_name}#{detail}")
       end

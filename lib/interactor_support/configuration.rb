@@ -46,6 +46,11 @@ module InteractorSupport
     attr_accessor :log_unknown_request_object_attributes
 
     ##
+    # Default interactor failure handler(s) applied when none are specified.
+    # Accepts a symbol, callable, or array of either.
+    attr_accessor :default_interactor_error_handler
+
+    ##
     # Initializes the configuration with default values:
     # - `request_object_behavior` defaults to `:returns_context`
     # - `request_object_key_type` defaults to `:symbol`
@@ -58,6 +63,7 @@ module InteractorSupport
       @logger = Logger.new($stdout)
       @log_level = Logger::INFO
       @log_unknown_request_object_attributes = true
+      @default_interactor_error_handler = nil
     end
   end
 end
